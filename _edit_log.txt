@@ -1,0 +1,1 @@
+2026-03-02: Converted role selection buttons to anchors, updated CSS for anchor role buttons, ensured JS handlers unaffected.

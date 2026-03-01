@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <link rel="shortcut icon" href="image/favicon.ico" type="image/x-icon">
+
+    <!-- Google Fonts - Poppins -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-p1ZxvNbuI3E1K+BcPBhVwxq+3+BabeOJKgbnhP+M7DgpU7bV6lvv1/beDZV2C9xUbG8MRoysLfzJ6w2l0Q39xw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    
+    <!-- AOS animations -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" integrity="sha512-HoSRODADu3AjpLx4cHK/0qyFQExg3C4gzzwGHPZUOqITgNv224ocCGFAvH608b1EBJ7MT5V7ySFkN4hN43IKNQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="style.css">
+    
+    <title>MuntiCare</title>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg bg-body-tertiary fixed-top shadow-0">
+        <div class="container-fluid">
+            <!-- Brand -->
+            <a class="navbar-brand fw-bold text-success" href="#">
+                <img src="image/favicon.ico" alt="">MuntiCare
+            </a>
+
+            <!-- Bootstrap Burger -->
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarTogglerDemo01" aria-controls="navbarTogglerDemo01" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <!-- Collapsible Content -->
+            <div class="collapse navbar-collapse" id="navbarTogglerDemo01">
+                <!-- Nav Links -->
+                <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
+                    <li class="nav-item"><a class="nav-link active fw-bolder" aria-current="page" href="#hero">Home</a></li>
+                    <li class="nav-item"><a class="nav-link fw-bolder" href="#services">Services</a></li>
+                    <li class="nav-item"><a class="nav-link fw-bolder" href="#about">About Us</a></li>
+                    <li class="nav-item"><a class="nav-link fw-bolder" href="#">Contact</a></li>
+                </ul>
+
+                <!-- CTA Button -->
+                <div class="d-flex">
+                    <a href="auth.html" class="btn btn-dark btn-rounded">Get Started</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <section id="hero" class="hero pt-5">
+        <div class="container">
+            <div class="row align-items-center">
+                <!-- Text -->
+                <div class="col-lg-6 hero-text" data-aos="fade-right" data-aos-duration="1000">
+                    <h1 class="mb-3">Revolutionary Healthcare<br> Management System</h1>
+                    <p class="mb-4">
+                        Efficiently manage patient care, appointments, and vaccine inventories with
+                        our comprehensive platform designed for modern healthcare providers.
+                    </p>
+                    <div class="d-flex flex-wrap gap-3">
+                        <a href="auth.html" class="btn btn-success btn-custom btn-rounded">Join us for free</a>
+                        <a href="auth.html" class="btn btn-outline-success btn-custom btn-rounded">Explore Features</a>
+                    </div>
+                </div>
+                <!-- Card -->
+                <div class="col-lg-6 text-center mt-5 mt-lg-0" data-aos="fade-left" data-aos-duration="1000">
+                    <div class="card-custom" data-aos="zoom-in" data-aos-delay="200">
+                        <i class="fas fa-laptop-medical fa-3x mb-3 text-success"></i>
+                        Healthcare Dashboard
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-5 bg-light">
+        <div class="container text-center">
+            <!-- Heading -->
+            <h3 class="fw-bold mb-2">Trusted by Healthcare Providers in Muntinlupa</h3>
+            <p class="text-muted mb-5">Key metrics reflecting our healthcare services excellence</p>
+
+            <!-- Stats Row -->
+            <div class="row g-4 justify-content-center" id="stats-container">
+            <!-- JS will inject stats here -->
+            </div>
+
+        </div>
+    </section>
+
+    <section id="services" class="py-5 bg-light">
+        <div class="container text-center">
+            <!-- Heading -->
+            <h3 class="fw-bold mb-2" data-aos="fade-up">Our Core Services</h3>
+            <p class="text-muted mb-5" data-aos="fade-up" data-aos-delay="150">Comprehensive healthcare management solutions tailored for your needs
+            </p>
+
+            <!-- Services Row -->
+            <div class="row g-4" id="services-container">
+            <!-- JS will inject services here -->
+            </div>
+        </div>
+    </section>
+
+    <section id="testimonials" class="py-12">
+        <div class="container px-4 px-lg-5">
+
+            <!-- Section Header -->
+            <div class="text-center mb-5" data-aos="fade-up">
+                <h2 class="fw-bold text-success mb-3">What Our Users Say</h2>
+                <p class="text-muted mx-auto" style="max-width: 700px;"> Hear from patients, doctors, and administrators who use MuntiCare to improve healthcare management and services.</p>
+            </div>
+
+            <!-- Testimonials Grid -->
+            <div class="row g-4" id="testimonials-container">
+            <!-- JS will inject testimonial cards here -->
+            </div>
+
+        </div>
+    </section>
+
+    <section id="about" class="py-5 bg-light">
+        <div class="container">
+            <div class="row align-items-center g-5">
+            
+                <!-- Content -->
+                <div class="col-lg-6" data-aos="fade-right" data-aos-duration="1000">
+                    <h2 class="fw-bold display-6 text-success mb-4">Transforming Healthcare in Muntinlupa</h2>
+                    <p class="text-muted lead mb-3" data-aos="fade-up" data-aos-delay="100">
+                        Since 2020, <strong>MuntiCare</strong> has been revolutionizing healthcare delivery by making 
+                        services more accessible, efficient, and patient-centered through digital innovation.
+                    </p>
+                    <p class="text-muted lead mb-4" data-aos="fade-up" data-aos-delay="200">
+                        From appointment booking to vaccination tracking, our platform ensures that every resident 
+                        receives timely care while empowering healthcare providers with smarter tools.
+                    </p>
+
+                    <!-- Stats -->
+                    <div class="row text-center mb-4 g-4">
+                        <div class="col-6 col-md-3" data-aos="zoom-in" data-aos-delay="100">
+                            <div class="mb-2">
+                                <div class="bg-success-subtle text-success d-flex align-items-center justify-content-center rounded-circle mx-auto" style="width:60px; height:60px;">
+                                    <i class="bi bi-people fs-4"></i>
+                                </div>
+                            </div>
+                            <h4 class="fw-bold text-success">15k+</h4>
+                            <p class="small text-muted mb-0">Active Patients</p>
+                        </div>
+                        <div class="col-6 col-md-3" data-aos="zoom-in" data-aos-delay="200">
+                            <div class="mb-2">
+                            <div class="bg-success-subtle text-success d-flex align-items-center justify-content-center rounded-circle mx-auto" style="width:60px; height:60px;">
+                                <i class="bi bi-calendar-check fs-4"></i>
+                            </div>
+                        </div>
+                        <h4 class="fw-bold text-success">2.8k</h4>
+                        <p class="small text-muted mb-0">Appointments / Mo</p>
+                    </div>
+                    <div class="col-6 col-md-3" data-aos="zoom-in" data-aos-delay="300">
+                        <div class="mb-2">
+                            <div class="bg-success-subtle text-success d-flex align-items-center justify-content-center rounded-circle mx-auto" style="width:60px; height:60px;">
+                                <i class="bi bi-shield-plus fs-4"></i>
+                            </div>
+                        </div>
+                        <h4 class="fw-bold text-success">98%</h4>
+                        <p class="small text-muted mb-0">Vaccination Coverage</p>
+                    </div>
+                    <div class="col-6 col-md-3" data-aos="zoom-in" data-aos-delay="400">
+                        <div class="mb-2">
+                            <div class="bg-success-subtle text-success d-flex align-items-center justify-content-center rounded-circle mx-auto" style="width:60px; height:60px;">
+                                <i class="bi bi-heart-pulse fs-4"></i>
+                            </div>
+                        </div>
+                        <h4 class="fw-bold text-success">24/7</h4>
+                        <p class="small text-muted mb-0">Digital Access</p>
+                    </div>
+                </div>
+
+                <div>
+                    <a href="#services" class="btn btn-success px-4 py-2 rounded-3 shadow-sm" data-aos="fade-up" data-aos-delay="500">
+                    Learn More About MuntiCare
+                    </a>
+                </div>
+            </div>
+
+            <!-- Image -->
+            <div class="col-lg-6 position-relative" data-aos="fade-left" data-aos-duration="1000">
+                <div class="rounded-4 overflow-hidden shadow-lg">
+                    <img src="https://i.pinimg.com/1200x/46/5a/f1/465af15f6684b1ea0d799fda31c951e3.jpg" alt="Healthcare Professionals" class="w-100" style="height:500px; object-fit:cover;">
+                </div>
+
+                <!-- Floating Card -->
+                <div class="position-absolute bottom-0 start-0 translate-middle-y bg-white p-3 rounded-4 shadow-lg" style="width: 250px;" data-aos="zoom-in" data-aos-delay="300">
+                    <div class="d-flex align-items-center">
+                        <div class="bg-success text-white rounded-circle d-flex align-items-center justify-content-center me-3" style="width:50px; height:50px;">
+                            <i class="bi bi-award fs-5"></i>
+                        </div>
+                        <div>
+                            <h6 class="fw-bold text-success mb-1">Healthcare Innovator</h6>
+                            <p class="small text-muted mb-0">Recognized 2024 Digital Health Award</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <footer class="pt-5 pb-3" style="background: linear-gradient(to top, #4ade80, #f8f9fa);">
+        <div class="container">
+            <div class="row gy-4">
+                <!-- Logo & Description -->
+                <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="100">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="d-flex justify-content-center align-items-center">
+                            <img src="image/MuntiCare Logo.png" 
+                                alt="MuntiCare Logo" 
+                                class="img-fluid" 
+                                style="max-width: 50px; max-height: 50px;">
+                        </div>
+                        <div class="ms-3">
+                            <h5 class="mb-0 fw-bold text-success">MuntiCare</h5>
+                            <small class="text-muted">Muntinlupa City Health Office</small>
+                        </div>
+                    </div>
+                    <p class="text-dark small">
+                        Transforming healthcare access for Muntinlupa City through innovative digital solutions. 
+                        Connecting citizens with quality healthcare services, anytime, anywhere.
+                    </p>
+                    <div class="d-flex gap-3 mt-3">
+                        <a href="#" class="fs-5 text-success hover-opacity"><i class="bi bi-facebook"></i></a>
+                        <a href="#" class="fs-5 text-success hover-opacity"><i class="bi bi-twitter"></i></a>
+                        <a href="#" class="fs-5 text-success hover-opacity"><i class="bi bi-instagram"></i></a>
+                    </div>
+                </div>
+
+                <!-- Quick Links -->
+                <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="200">
+                    <h6 class="fw-bold mb-3 text-success">Quick Links</h6>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><a href="#" class="text-dark text-decoration-none hover-link">About MuntiCare</a></li>
+                        <li class="mb-2"><a href="#" class="text-dark text-decoration-none hover-link">Features</a></li>
+                        <li class="mb-2"><a href="#" class="text-dark text-decoration-none hover-link">How It Works</a></li>
+                        <li class="mb-2"><a href="#" class="text-dark text-decoration-none hover-link">Patient Login</a></li>
+                        <li class="mb-2"><a href="#" class="text-dark text-decoration-none hover-link">Register</a></li>
+                        <li class="mb-2"><a href="#" class="text-dark text-decoration-none hover-link">Support</a></li>
+                    </ul>
+                </div>
+
+                <!-- Contact Info -->
+                <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="300">
+                    <h6 class="fw-bold mb-3 text-success">Contact Information</h6>
+                    <p class="mb-2 small">
+                        <i class="bi bi-geo-alt-fill me-2 text-success"></i>
+                        City Health Office of Muntinlupa<br>
+                        Civic Center Complex, National Road<br>
+                        Tunasan, Muntinlupa City
+                    </p>
+                    <p class="mb-2 small">
+                        <i class="bi bi-telephone-fill me-2 text-success"></i>(02) 8842-7221
+                    </p>
+                    <p class="mb-0 small">
+                        <i class="bi bi-envelope-fill me-2 text-success"></i>health@muntinlupa.gov.ph
+                    </p>
+                </div>
+            </div>
+
+            <!-- Bottom Footer -->
+            <hr class="my-4">
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-center">
+                <p class="mb-0 small">© <span id="year"></span> City Health Office of Muntinlupa. All rights reserved.</p>
+                <div class="mt-3 mt-md-0">
+                    <a href="#" class="me-3 text-dark text-decoration-none hover-link">Privacy Policy</a>
+                    <a href="#" class="me-3 text-dark text-decoration-none hover-link">Terms of Use</a>
+                    <a href="#" class="text-dark text-decoration-none hover-link">Accessibility</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        const stats = [
+            { value: "15,750", label: "Active Patients", change: "+12% this month", changeType: "success", icon: "↗" },
+            { value: "2,840", label: "Monthly Consultations", change: "+18% this month", changeType: "success", icon: "↗" },
+            { value: "98.5%", label: "Patient Satisfaction", change: "+3% this month", changeType: "success", icon: "↗" },
+            { value: "24/7", label: "System Availability", change: "99.9% uptime", changeType: "danger", icon: "⚠" },
+        ];
+
+        const statsContainer = document.getElementById("stats-container");
+
+        stats.forEach((stat, index) => {
+            const col = document.createElement("div");
+            col.className = "col-6 col-md-3";
+
+            col.innerHTML = `
+            <div class="p-4 bg-white rounded-4 shadow-sm h-100 stat-card">
+                <h2 class="fw-bold text-success">${stat.value}</h2>
+                <p class="mb-1">${stat.label}</p>
+                <small class="text-${stat.changeType}">
+                ${stat.icon} ${stat.change}
+                </small>
+            </div>
+            `;
+
+            statsContainer.appendChild(col);
+        });
+
+        const services = [
+            {
+                icon: "bi bi-person-badge-fill",
+                title: "Patient Management",
+                desc: "Comprehensive patient record management with secure data storage, medical history tracking, and seamless information access for healthcare providers."
+            },
+            {
+                icon: "bi bi-calendar-event-fill",
+                title: "Appointment System",
+                desc: "Intelligent scheduling system with automated reminders, conflict prevention, and real-time availability updates for optimal time management."
+            },
+            {
+                icon: "bi bi-capsule-pill",
+                title: "Vaccine Inventory Management",
+                desc: "Advanced vaccine tracking system with expiration monitoring, temperature control alerts, and automated inventory restocking notifications."
+            },
+            {
+                icon: "bi bi-people-fill",
+                title: "Multi-user Registration",
+                desc: "Flexible user management system supporting different roles and permissions for healthcare staff, administrators, and patient access."
+            }
+        ];
+
+        const servicesContainer = document.getElementById("services-container");
+
+        services.forEach((service, index) => {
+            const col = document.createElement("div");
+            col.className = "col-12 col-md-6 col-lg-3";
+            col.setAttribute("data-aos", "zoom-in");
+            col.setAttribute("data-aos-delay", index * 150);
+
+            col.innerHTML = `
+            <div class="card service-card h-100 rounded-4">
+                <div class="card-body text-center p-4">
+                <div class="icon-box mb-3 mx-auto">
+                    <i class="${service.icon}"></i>
+                </div>
+                <h6 class="fw-bold text-success">${service.title}</h6>
+                <p class="text-muted small">${service.desc}</p>
+                <a href="#" class="learn-more">Learn More →</a>
+                </div>
+            </div>
+            `;
+            servicesContainer.appendChild(col);
+        });
+
+        const testimonials = [
+            {
+                name: "Dr. Anna Reyes",
+                position: "Pediatrician",
+                project: "Patient Management",
+                message: "MuntiCare has completely streamlined my workflow. Accessing patient records is faster and more secure, allowing me to focus more on care rather than paperwork.",
+                photo: "https://randomuser.me/api/portraits/women/44.jpg",
+                stars: 5
+            },
+            {
+                name: "Michael Santos",
+                position: "Patient",
+                project: "Appointment Scheduling",
+                message: "Booking appointments is so easy now. I receive reminders and updates instantly. No more long lines or missed schedules!",
+                photo: "https://randomuser.me/api/portraits/men/46.jpg",
+                stars: 5
+            },
+            {
+                name: "Karen Lim",
+                position: "Health Administrator",
+                project: "Vaccine Inventory",
+                message: "Monitoring vaccine stocks used to be stressful. With MuntiCare, I can track expiration dates and supply levels in real time. It saves us so much time.",
+                photo: "https://randomuser.me/api/portraits/women/65.jpg",
+                stars: 4
+            }
+        ];
+
+        const testimonialsContainer = document.getElementById("testimonials-container");
+
+        testimonials.forEach((testimonial, index) => {
+            const col = document.createElement("div");
+            col.className = "col-12 col-md-6 col-lg-4";
+            col.setAttribute("data-aos", "zoom-in");
+            col.setAttribute("data-aos-delay", index * 200);
+
+            // Generate stars
+            let starsHTML = "";
+            for (let i = 0; i < testimonial.stars; i++) {
+            starsHTML += '<i class="bi bi-star-fill text-warning"></i>';
+            }
+
+            col.innerHTML = `
+            <div class="card testimonial-card h-100 rounded-4">
+                <div class="card-body d-flex flex-column p-4">
+                <div class="d-flex align-items-center mb-3">
+                    <i class="bi bi-quote text-success fs-3 me-2"></i>
+                    <div>${starsHTML}</div>
+                </div>
+                <p class="text-muted flex-grow-1">"${testimonial.message}"</p>
+                <div class="d-flex align-items-center mt-4">
+                    <img src="${testimonial.photo}" alt="${testimonial.name}" class="rounded-circle me-3" width="60" height="60">
+                    <div>
+                    <h6 class="mb-0 text-success fw-bold">${testimonial.name}</h6>
+                    <small class="text-muted d-block">${testimonial.position}</small>
+                    <small class="text-primary fw-semibold">${testimonial.project}</small>
+                    </div>
+                </div>
+                </div>
+            </div>
+            `;
+
+            testimonialsContainer.appendChild(col);
+        });
+    </script>
+
+    <script>
+        // Set current year in footer
+        document.getElementById("year").textContent = new Date().getFullYear();
+
+        // Navbar scroll effect
+        window.addEventListener("scroll", function() {
+            const navbar = document.querySelector(".navbar");
+            if (window.scrollY > 50) {
+                navbar.classList.add("scrolled");
+            } else {
+                navbar.classList.remove("scrolled");
+            }
+        });
+    </script>
+    <!-- AOS library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js" integrity="sha512-GtNm7+kD4uCxVMiFJqvFmzMXJO2+e9s9q+7SyIptOyDolZTP7v702DjFn3v8Vl37yI00Z8ExN6RzWA2GBoCx2Q==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script>
+        AOS.init();
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+</body>
+</html>
