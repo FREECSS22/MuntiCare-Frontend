@@ -133,7 +133,7 @@
                             <i class="bi bi-person-heart"></i><span class="ms-1 d-none d-sm-inline">Patient</span>
                         </a>
                     </div>
-                    <input type="hidden" id="selectedRole" required>
+                    <input type="hidden">
                 </div>
                 
                 <div class="mb-2">
@@ -285,13 +285,21 @@
             });
 
             /**
-             * Handle Role Selection
-             */
+            * Handle Role Selection
+            */
             const roleButtons = document.querySelectorAll(".role-btn");
             const selectedRoleInput = document.getElementById("selectedRole");
 
             roleButtons.forEach(btn => {
                 btn.addEventListener("click", function(e) {
+                    const role = this.dataset.role;
+                    
+                    // If admin role, allow navigation immediately
+                    if (role === 'admin') {
+                        return; // Allow default link behavior
+                    }
+                    
+                    // For other roles, prevent navigation and just select
                     e.preventDefault();
                     
                     // Remove active class from all buttons
