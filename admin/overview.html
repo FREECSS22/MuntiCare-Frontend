@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MuntiCare Dashboard - Portfolio</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.js"></script>
+<style>
+body { margin:0; font-family:Arial,sans-serif; background:#f0f0f0; }
+
+/* Top Navbar */
+.top-navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 70px;
+    background: white;
+    border-bottom: 1px solid #e0e0e0;
+    padding: 0 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    z-index: 1030;
+}
+
+.top-navbar h4 {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #212529;
+}
+
+.menu-toggle {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: 0.5rem;
+    color: #212529;
+    display: none;
+}
+
+.user-dropdown .dropdown-toggle {
+    background: transparent;
+    border: none;
+    padding: 0.25rem;
+}
+
+.user-dropdown .dropdown-toggle::after {
+    margin-left: 0.5rem;
+}
+
+/* Sidebar */
+.sidebar { 
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 265px;
+    height: 100vh;
+    background-color: #1CDB88;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    z-index: 1040;
+    transition: transform 0.3s ease;
+}
+
+.sidebar-header { 
+    display: flex; 
+    align-items: center; 
+    gap: 0.75rem; 
+    padding: 1.5rem 1.25rem;
+    border-bottom: 1px solid rgba(0,0,0,0.05);
+}
+
+.sidebar-header .logo { 
+    width: 45px; 
+    height: 45px;
+}
+
+.sidebar-header-text h5 {
+    margin: 0;
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: #212529;
+    line-height: 1.2;
+}
+
+.sidebar-header-text small {
+    font-size: 0.8125rem;
+    color: #212529;
+    opacity: 0.75;
+}
+
+.sidebar-nav {
+    padding: 1.5rem 1rem;
+}
+
+.menu-label { 
+    font-size: 0.6875rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #212529;
+    opacity: 0.7;
+    margin-bottom: 0.5rem;
+    padding-left: 0.75rem;
+}
+
+.nav-link { 
+    color: #212529;
+    padding: 0.625rem 0.75rem;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    transition: all 0.2s;
+    text-decoration: none;
+    font-size: 0.9375rem;
+    font-weight: 400;
+    margin-bottom: 0.25rem;
+}
+
+.nav-link i {
+    font-size: 1rem;
+    width: 18px;
+}
+
+.nav-link:hover { 
+    background-color: rgba(0, 0, 0, 0.08);
+    color: #000;
+}
+
+.nav-link.active { 
+    background-color: rgba(0, 0, 0, 0.12);
+    font-weight: 500;
+    color: #000;
+}
+
+.menu-section {
+    margin-bottom: 1.75rem;
+}
+
+/* Main content */
+main { 
+    margin-left: 265px;
+    margin-top: 70px;
+    padding: 2rem;
+    transition: margin-left 0.3s ease;
+}
+
+.page-header {
+    margin-bottom: 2.5rem;
+}
+
+.page-title {
+    font-size: 2rem;
+    font-weight: 600;
+    color: #212529;
+    margin-bottom: 0.5rem;
+}
+
+.page-subtitle {
+    color: #6c757d;
+    font-size: 1rem;
+    margin: 0;
+}
+
+.card { 
+    border-radius: 8px;
+    border: 1px solid #e0e0e0;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+}
+
+.card-header {
+    background: white;
+    border-bottom: 1px solid #e0e0e0;
+    padding: 1rem 1.25rem;
+    font-weight: 500;
+    font-size: 0.9375rem;
+}
+
+/* Mobile styles */
+@media (max-width: 768px) {
+    .menu-toggle {
+        display: block;
+    }
+
+    .sidebar {
+        transform: translateX(-100%);
+    }
+
+    .sidebar.show {
+        transform: translateX(0);
+    }
+
+    main {
+        margin-left: 0;
+    }
+
+    .top-navbar {
+        padding: 0 1rem;
+    }
+
+    .top-navbar h4 {
+        font-size: 1.25rem;
+    }
+
+    /* Overlay when sidebar is open */
+    .sidebar-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0,0,0,0.5);
+        z-index: 1030;
+    }
+
+    .sidebar-overlay.show {
+        display: block;
+    }
+}
+
+/* Tablet styles */
+@media (min-width: 769px) and (max-width: 1024px) {
+    .sidebar {
+        width: 240px;
+    }
+
+    main {
+        margin-left: 240px;
+    }
+}
+</style>
+</head>
+<body>
+
+<!-- Top Navbar -->
+<nav class="top-navbar">
+    <div class="d-flex align-items-center gap-3">
+        <button class="menu-toggle" id="menuToggle">
+            <i class="bi bi-list"></i>
+        </button>
+        <h4>Dashboard</h4>
+    </div>
+
+    <div class="d-flex align-items-center gap-3">
+        <div class="dropdown user-dropdown">
+            <button class="dropdown-toggle d-flex align-items-center" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <i class="bi bi-person-circle fs-4"></i>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end">
+                <li><a class="dropdown-item" href="#">Profile</a></li>
+                <li><a class="dropdown-item" href="#">Settings</a></li>
+                <li><hr class="dropdown-divider"></li>
+                <li><a class="dropdown-item" href="../auth.html">Logout</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<!-- Sidebar Overlay (mobile only) -->
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+<!-- Sidebar -->
+<aside class="sidebar" id="sidebar">
+    <header class="sidebar-header">
+        <img src="../image/MuntiCare Logo.png" alt="Logo" class="logo">
+        <div class="sidebar-header-text">
+            <h5>MuntiCare</h5>
+            <small>Health Management</small>
+        </div>
+    </header>
+
+    <nav class="sidebar-nav">
+        <div class="menu-section">
+            <p class="menu-label">Main Menu</p>
+            <ul class="nav flex-column">
+                <li><a href="#" class="nav-link active"><i class="bi bi-house-door"></i> Overview</a></li>
+                <li><a href="#" class="nav-link"><i class="bi bi-box"></i> Inventory</a></li>
+            </ul>
+        </div>
+
+        <div class="menu-section">
+            <p class="menu-label">Administration</p>
+            <ul class="nav flex-column">
+                <li><a href="#" class="nav-link"><i class="bi bi-people"></i> User Management</a></li>
+                <li><a href="#" class="nav-link"><i class="bi bi-chat-left-text"></i> Feedbacks</a></li>
+            </ul>
+        </div>
+    </nav>
+</aside>
+
+<!-- Main content -->
+<main>
+    <div class="page-header">
+        <h1 class="page-title">Dashboard Overview</h1>
+        <p class="page-subtitle">Welcome to MuntiCare Health Management System</p>
+    </div>
+
+    <!-- Metrics -->
+    <div class="row g-4 mb-4">
+        <div class="col-md-3 col-sm-6">
+            <div class="card shadow-sm" style="background-color:#F0F7FF;">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <span class="fw-semibold text-muted">Total Appointments</span>
+                        <span class="bg-primary text-white rounded p-2"><i class="bi bi-calendar3"></i></span>
+                    </div>
+                    <h3 class="fw-bold mt-2">1,234</h3>
+                    <small class="text-success">+5% from last month</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6">
+            <div class="card shadow-sm" style="background-color:#ECFBF2;">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <span class="fw-semibold text-muted">Active Patients</span>
+                        <span class="bg-success text-white rounded p-2"><i class="bi bi-people"></i></span>
+                    </div>
+                    <h3 class="fw-bold mt-2">567</h3>
+                    <small class="text-success">+3% from last month</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6">
+            <div class="card shadow-sm" style="background-color:#EAF8F0;">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <span class="fw-semibold text-muted">Vaccinations Given</span>
+                        <span class="bg-success text-white rounded p-2"><i class="bi bi-heart"></i></span>
+                    </div>
+                    <h3 class="fw-bold mt-2">890</h3>
+                    <small class="text-success">+8% from last month</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6">
+            <div class="card shadow-sm" style="background-color:#FFF5E6;">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <span class="fw-semibold text-muted">Vaccine Stock</span>
+                        <span class="bg-warning text-white rounded p-2"><i class="bi bi-box-seam"></i></span>
+                    </div>
+                    <h3 class="fw-bold mt-2">150</h3>
+                    <small class="text-success">Stock levels good</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Charts -->
+    <div class="row g-4 mb-4">
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-header bg-white">Appointments Trend</div>
+                <div class="card-body"><canvas id="appointmentsTrendChart" height="200"></canvas></div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-header bg-white">Vaccine Distribution</div>
+                <div class="card-body"><canvas id="vaccineDistributionChart" height="200"></canvas></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4 mb-4">
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-header bg-white">Patient Demographics</div>
+                <div class="card-body"><canvas id="demographicsChart" height="200"></canvas></div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-header bg-white">Appointment Status</div>
+                <div class="card-body"><canvas id="statusChart" height="200"></canvas></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Today Appointments -->
+    <div class="row g-4">
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-header bg-white">Today's Appointments</div>
+                <div class="card-body">
+                    <div class="p-3 border rounded mb-3 d-flex justify-content-between align-items-center">
+                        <div><strong>John Doe</strong> — Checkup</div>
+                        <span class="badge bg-success">confirmed</span>
+                    </div>
+                    <div class="p-3 border rounded mb-3 d-flex justify-content-between align-items-center">
+                        <div><strong>Jane Smith</strong> — Vaccination</div>
+                        <span class="badge bg-warning text-dark">pending</span>
+                    </div>
+                    <div class="p-3 border rounded mb-3 d-flex justify-content-between align-items-center">
+                        <div><strong>Mark Lee</strong> — Consultation</div>
+                        <span class="badge bg-danger">cancelled</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-header bg-white">Notifications</div>
+                <div class="card-body">
+                    <div class="p-3 border rounded mb-3 d-flex align-items-center">
+                        <i class="bi bi-info-circle text-primary me-2"></i>
+                        <span>System maintenance at 3PM</span>
+                    </div>
+                    <div class="p-3 border rounded mb-3 d-flex align-items-center">
+                        <i class="bi bi-exclamation-circle text-warning me-2"></i>
+                        <span>Low vaccine stock alert</span>
+                    </div>
+                    <div class="p-3 border rounded mb-3 d-flex align-items-center">
+                        <i class="bi bi-exclamation-triangle text-warning me-2"></i>
+                        <span>1 vaccine batches expiring within 30 days</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+// Sidebar toggle functionality
+const menuToggle = document.getElementById('menuToggle');
+const sidebar = document.getElementById('sidebar');
+const sidebarOverlay = document.getElementById('sidebarOverlay');
+
+menuToggle.addEventListener('click', () => {
+    sidebar.classList.toggle('show');
+    sidebarOverlay.classList.toggle('show');
+});
+
+sidebarOverlay.addEventListener('click', () => {
+    sidebar.classList.remove('show');
+    sidebarOverlay.classList.remove('show');
+});
+
+// Close sidebar when clicking a link on mobile
+const navLinks = document.querySelectorAll('.sidebar .nav-link');
+navLinks.forEach(link => {
+    link.addEventListener('click', () => {
+        if (window.innerWidth <= 768) {
+            sidebar.classList.remove('show');
+            sidebarOverlay.classList.remove('show');
+        }
+    });
+});
+
+// Charts
+const createDummyChart = (ctx, type) => {
+    new Chart(ctx, {
+        type: type,
+        data: {
+            labels: ['Jan','Feb','Mar','Apr','May','Jun','Jul'],
+            datasets: [{
+                label: 'Dataset',
+                data: [10,20,15,30,25,35,20],
+                backgroundColor: type==='bar'||type==='line' ? '#0d6efd' : ['#0d6efd','#198754','#ffc107','#dc3545','#6c757d'],
+                borderColor:'#fff',
+                borderWidth:1,
+                fill: type==='line'
+            }]
+        },
+        options: { 
+            responsive:true, 
+            maintainAspectRatio: true,
+            plugins:{ legend:{display:true} } 
+        }
+    });
+};
+
+document.addEventListener('DOMContentLoaded', () => {
+    createDummyChart(document.getElementById('appointmentsTrendChart').getContext('2d'), 'line');
+    createDummyChart(document.getElementById('vaccineDistributionChart').getContext('2d'), 'doughnut');
+    createDummyChart(document.getElementById('demographicsChart').getContext('2d'), 'bar');
+    createDummyChart(document.getElementById('statusChart').getContext('2d'), 'pie');
+});
+</script>
+</body>
+</html>
