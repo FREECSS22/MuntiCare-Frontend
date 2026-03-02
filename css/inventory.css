@@ -1,6 +1,9 @@
+* {
+    font-family: 'Poppins', sans-serif;
+}
+
 body {
     margin:0;
-    font-family:Arial,sans-serif;
     background:#f0f0f0;
 }
 
