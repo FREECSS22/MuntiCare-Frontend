@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MuntiCare</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="shortcut icon" href="../image/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="../css/inventory.css">
+</head>
+<body>
+    <!-- Top Navbar -->
+    <nav class="top-navbar">
+        <div class="d-flex align-items-center gap-3">
+            <button class="menu-toggle" id="menuToggle">
+                <i class="bi bi-list"></i>
+            </button>
+            <h4>Vaccine Inventory</h4>
+        </div>
+
+        <div class="d-flex align-items-center gap-3">
+            <div class="dropdown user-dropdown">
+                <button class="dropdown-toggle d-flex align-items-center" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="bi bi-person-circle fs-4"></i>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end">
+                    <li><a class="dropdown-item" href="#">Profile</a></li>
+                    <li><a class="dropdown-item" href="#">Settings</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item" href="../index.html">Logout</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Sidebar Overlay (mobile only) -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        <header class="sidebar-header">
+            <img src="../image/MuntiCare Logo.png" alt="Logo" class="logo">
+            <div class="sidebar-header-text">
+                <h5>MuntiCare</h5>
+                <small>Health Management</small>
+            </div>
+        </header>
+
+        <nav class="sidebar-nav">
+            <div class="menu-section">
+                <p class="menu-label">Main Menu</p>
+                <ul class="nav flex-column">
+                    <li><a href="overview.html" class="nav-link"><i class="bi bi-house-door"></i> Overview</a></li>
+                    <li><a href="inventory.html" class="nav-link active"><i class="bi bi-box"></i> Inventory</a></li>
+                </ul>
+            </div>
+
+            <div class="menu-section">
+                <p class="menu-label">Administration</p>
+                <ul class="nav flex-column">
+                    <li><a href="#" class="nav-link"><i class="bi bi-people"></i> User Management</a></li>
+                    <li><a href="#" class="nav-link"><i class="bi bi-chat-left-text"></i> Feedbacks</a></li>
+                </ul>
+            </div>
+        </nav>
+    </aside>
+
+    <!-- Main content -->
+    <main>
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h5 class="fw-bold mb-0">Vaccine Inventory</h5>
+            <div>
+                <button class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#addVaccineModal">
+                    <i class="bi bi-plus-circle me-1"></i> Add New Vaccine
+                </button>
+                <button class="btn btn-warning btn-sm" onclick="showVaccineListInfo()">
+                    <i class="bi bi-list-ul me-1"></i> Vaccine List
+                </button>
+            </div>
+        </div>
+        
+        <div class="row g-3">
+            <!-- Left Column -->
+            <div class="col-12 col-lg-3">
+                <div class="bg-white shadow-sm rounded p-3 h-100">
+                    <h6 class="fw-bold">Search Vaccine</h6>
+                    <div class="input-group mb-3">
+                        <input type="text" class="form-control" id="searchVaccine" placeholder="Search">
+                        <button class="btn btn-dark"><i class="bi bi-search"></i></button>
+                    </div>
+                    
+                    <button class="btn btn-dark w-100 mb-3" data-bs-toggle="modal" data-bs-target="#addVaccineBatchModal">
+                        + Add Vaccine Batch
+                    </button>
+
+                    <div class="d-grid gap-2">
+                        <div class="alert alert-primary py-2 px-3 d-flex justify-content-between align-items-center">
+                            <span>Total Stock</span> <strong id="totalStock">0</strong>
+                        </div>
+                        <div class="alert alert-warning py-2 px-3 d-flex justify-content-between align-items-center">
+                            <span>Low Stock Items</span> <strong id="lowStock">0</strong>
+                        </div>
+                        <div class="alert alert-danger py-2 px-3 d-flex justify-content-between align-items-center">
+                            <span>Expiring Soon</span> <strong id="expiringSoon">0</strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Right Column -->
+            <div class="col-12 col-lg-9">
+                <div class="bg-white shadow-sm rounded p-3">
+                    <h6 class="fw-bold mb-3">Stock & Expiry</h6>
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Vaccine</th>
+                                    <th>Batch #</th>
+                                    <th>Quantity</th>
+                                    <th>Expiry Date</th>
+                                    <th>Status</th>
+                                    <th class="text-center">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="vaccineBatchTableBody">
+                                <!-- Data will be populated here -->
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <!-- Pagination -->
+                    <div class="d-flex align-items-center justify-content-between border-top pt-3 mt-3">
+                        <!-- Mobile pagination -->
+                        <div class="d-flex flex-fill justify-content-between d-sm-none">
+                            <button class="btn btn-sm btn-outline-secondary" id="mobilePrev" onclick="changePage(currentPage - 1)">Previous</button>
+                            <button class="btn btn-sm btn-outline-secondary" id="mobileNext" onclick="changePage(currentPage + 1)">Next</button>
+                        </div>
+                        
+                        <!-- Desktop pagination -->
+                        <div class="d-none d-sm-flex flex-fill align-items-center justify-content-between">
+                            <div>
+                                <p class="text-sm text-muted mb-0">
+                                    Showing
+                                    <span class="fw-medium" id="showingFrom">1</span>
+                                    to
+                                    <span class="fw-medium" id="showingTo">5</span>
+                                    of
+                                    <span class="fw-medium" id="totalItems">10</span>
+                                    results
+                                </p>
+                            </div>
+                            <div>
+                                <nav aria-label="Pagination">
+                                    <ul class="pagination mb-0" id="pagination">
+                                        <!-- Pagination will be populated here -->
+                                    </ul>
+                                </nav>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Add New Vaccine Modal -->
+    <div class="modal fade" id="addVaccineModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header" style="background-color: #1CDB88; color: white;">
+                    <h5 class="modal-title">Add New Vaccine</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="addVaccineForm">
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Vaccine Name <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="vaccineName" required placeholder="e.g., Pfizer COVID-19, Hepatitis B">
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Description</label>
+                            <textarea class="form-control" id="vaccineDescription" rows="3" placeholder="Description of the vaccine..."></textarea>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-dark">
+                                <i class="bi bi-check-circle me-1"></i> Add Vaccine
+                            </button>
+                            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                                Cancel
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Vaccine Batch Modal -->
+    <div class="modal fade" id="addVaccineBatchModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header" style="background-color: #1CDB88; color: white;">
+                    <h5 class="modal-title">Add Vaccine Batch</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="addVaccineBatchForm">
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Vaccine <span class="text-danger">*</span></label>
+                            <select class="form-select" id="vaccineSelect" required>
+                                <option value="">Select Vaccine</option>
+                                <option value="Influenza (Flu) Vaccine">Influenza (Flu) Vaccine</option>
+                                <option value="Oral Polio Vaccine (OPV)">Oral Polio Vaccine (OPV)</option>
+                                <option value="COVID-19 mRNA Vaccine (Pfizer-BioNTech)">COVID-19 mRNA Vaccine (Pfizer-BioNTech)</option>
+                                <option value="BCG (Bacillus Calmette–Guérin)">BCG (Bacillus Calmette–Guérin)</option>
+                                <option value="Rabies Vaccine">Rabies Vaccine</option>
+                                <option value="DPT (Diphtheria, Pertussis, Tetanus)">DPT (Diphtheria, Pertussis, Tetanus)</option>
+                                <option value="Varicella (Chickenpox) Vaccine">Varicella (Chickenpox) Vaccine</option>
+                                <option value="Inactivated Polio Vaccine (IPV)">Inactivated Polio Vaccine (IPV)</option>
+                                <option value="MMR Vaccine">MMR Vaccine</option>
+                                <option value="Hepatitis B Vaccine">Hepatitis B Vaccine</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Batch Number <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="batchNumber" required placeholder="e.g., B-1234">
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-semibold">Quantity <span class="text-danger">*</span></label>
+                                <input type="number" class="form-control" id="quantity" min="1" required placeholder="e.g., 100">
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-semibold">Received Date <span class="text-danger">*</span></label>
+                                <input type="date" class="form-control" id="receivedDate" required>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-semibold">Expiry Date <span class="text-danger">*</span></label>
+                                <input type="date" class="form-control" id="expiryDate" required>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Manufacturer</label>
+                            <input type="text" class="form-control" id="manufacturer" placeholder="e.g., Pfizer Inc.">
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Storage Location</label>
+                            <input type="text" class="form-control" id="storageLocation" placeholder="e.g., Refrigerator A - Shelf 2">
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Notes</label>
+                            <textarea class="form-control" id="notes" rows="2" placeholder="Additional notes..."></textarea>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-dark">
+                                <i class="bi bi-check-circle me-1"></i> Add Vaccine Batch
+                            </button>
+                            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                                Cancel
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Vaccine Batch Modal -->
+    <div class="modal fade" id="editVaccineBatchModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header" style="background-color: #1CDB88; color: white;">
+                    <h5 class="modal-title">Edit Vaccine Batch</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editVaccineBatchForm">
+                        <input type="hidden" id="edit_batch_id">
+                        
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Vaccine</label>
+                            <input type="text" class="form-control" id="edit_vaccine" readonly>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Batch Number</label>
+                            <input type="text" class="form-control" id="edit_batch_number" readonly>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Quantity <span class="text-danger">*</span></label>
+                            <input type="number" class="form-control" id="edit_quantity" min="0" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Expiry Date <span class="text-danger">*</span></label>
+                            <input type="date" class="form-control" id="edit_expiry_date" required>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-dark">
+                                <i class="bi bi-save me-1"></i> Update Batch
+                            </button>
+                            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                                Cancel
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="../js/inventory.js"></script>
+</body>
+</html>

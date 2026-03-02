@@ -1,0 +1,54 @@
+* {
+    font-family: 'Poppins', sans-serif;
+}
+
+.transition-section {
+    transition: transform 0.6s ease-in-out;
+}
+
+.form-content {
+    transition: opacity 0.3s ease-in-out;
+}
+
+.form-content.fade-out {
+    opacity: 0;
+}
+
+.form-content.fade-in {
+    opacity: 1;
+}
+
+.slide-active #formSection {
+    transform: translateX(33.33%);
+}
+
+.slide-active #infoPanel {
+    transform: translateX(-300%);
+}
+
+#authWrapper {
+    position: relative;
+}
+
+#toggleBtn {
+    z-index: 10;
+    transition: all 0.6s ease-in-out;
+}
+
+.toggle-btn-left {
+    left: 0;
+    transform: translateY(-50%) translateX(-50%);
+}
+
+.toggle-btn-right {
+    left: 100%;
+    transform: translateY(-50%) translateX(-50%);
+}
+
+#toggleBtn:hover {
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+.form-loading {
+    pointer-events: none;
+}
