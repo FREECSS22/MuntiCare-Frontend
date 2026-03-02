@@ -72,8 +72,7 @@ function displayVaccineBatches(page = 1) {
     
     if (vaccineData.length === 0) {
         tbody.innerHTML = '<tr><td colspan="6" class="text-center text-muted">No vaccine batches found</td></tr>';
-        document.getElementById('paginationControls').innerHTML = '';
-        document.getElementById('paginationInfo').textContent = 'Showing 0 to 0 of 0 results';
+        document.getElementById('paginationWrap').innerHTML = 'Showing <strong>0-0</strong> of <strong>0</strong> results';
         return;
     }
 
@@ -110,50 +109,36 @@ function displayVaccineBatches(page = 1) {
 
 function updatePagination() {
     const totalPages = Math.ceil(vaccineData.length / itemsPerPage);
-    const pagination = document.getElementById('paginationControls');
-    const paginationInfo = document.getElementById('paginationInfo');
+    const wrap = document.getElementById('paginationWrap');
     
     if (vaccineData.length === 0) {
-        pagination.innerHTML = '';
-        paginationInfo.textContent = 'Showing 0 to 0 of 0 results';
+        wrap.innerHTML = 'Showing <strong>0-0</strong> of <strong>0</strong> results';
         return;
     }
     
-    // Update "Showing X to Y of Z results"
     const showingFrom = vaccineData.length > 0 ? (currentPage - 1) * itemsPerPage + 1 : 0;
     const showingTo = Math.min(currentPage * itemsPerPage, vaccineData.length);
-    paginationInfo.textContent = `Showing ${showingFrom} to ${showingTo} of ${vaccineData.length} results`;
-    
-    let paginationHTML = '';
-    
-    // Previous button
-    paginationHTML += `
-        <li class="page-item ${currentPage === 1 ? 'disabled' : ''}">
-            <button type="button" class="page-link" aria-label="Previous" onclick="changePage(${currentPage - 1})">
-                <span aria-hidden="true">&laquo;</span>
-            </button>
-        </li>
+
+    let btns = `
+        <button class="pg-btn" onclick="changePage(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''}>
+            <i class="bi bi-chevron-left"></i>
+        </button>
     `;
-    
-    // Page numbers
+
     for (let i = 1; i <= totalPages; i++) {
-        paginationHTML += `
-            <li class="page-item ${currentPage === i ? 'active' : ''}">
-                <button type="button" class="page-link" onclick="changePage(${i})">${i}</button>
-            </li>
-        `;
+        btns += `<button class="pg-btn ${currentPage === i ? 'active' : ''}" onclick="changePage(${i})">${i}</button>`;
     }
-    
-    // Next button
-    paginationHTML += `
-        <li class="page-item ${currentPage === totalPages ? 'disabled' : ''}">
-            <button type="button" class="page-link" aria-label="Next" onclick="changePage(${currentPage + 1})">
-                <span aria-hidden="true">&raquo;</span>
-            </button>
-        </li>
+
+    btns += `
+        <button class="pg-btn" onclick="changePage(${currentPage + 1})" ${currentPage === totalPages ? 'disabled' : ''}>
+            <i class="bi bi-chevron-right"></i>
+        </button>
     `;
-    
-    pagination.innerHTML = paginationHTML;
+
+    wrap.innerHTML = `
+        <span>Showing <strong>${showingFrom}-${showingTo}</strong> of <strong>${vaccineData.length}</strong> results</span>
+        <div class="pagination-btns">${btns}</div>
+    `;
 }
 
 function changePage(page) {
@@ -171,6 +156,16 @@ function updateStats() {
     document.getElementById('totalStock').textContent = totalStock;
     document.getElementById('lowStock').textContent = lowStock;
     document.getElementById('expiringSoon').textContent = expiringSoon;
+}
+
+function showToast(msg, type = 'ok') {
+    const c = document.getElementById('toast-container');
+    if (!c) return;
+    const t = document.createElement('div');
+    t.className = `toast-item ${type === 'warn' ? 'warn' : ''}`;
+    t.innerHTML = `<i class="bi ${type === 'warn' ? 'bi-slash-circle' : 'bi-check-circle-fill'}"></i> ${msg}`;
+    c.appendChild(t);
+    setTimeout(() => t.remove(), 3000);
 }
 
 function editBatch(id) {
@@ -205,14 +200,7 @@ document.getElementById('editVaccineBatchForm').addEventListener('submit', funct
     
     const modal = bootstrap.Modal.getInstance(document.getElementById('editVaccineBatchModal'));
     modal.hide();
-    
-    Swal.fire({
-        icon: 'success',
-        title: 'Updated!',
-        text: 'Vaccine batch updated successfully!',
-        timer: 2000,
-        showConfirmButton: false
-    });
+    showToast('Vaccine batch updated successfully!');
 });
 
 function confirmDelete(id) {
@@ -243,14 +231,7 @@ function deleteBatch(id) {
     }
     
     displayVaccineBatches(currentPage);
-    
-    Swal.fire({
-        icon: 'success',
-        title: 'Deleted!',
-        text: 'Vaccine batch has been deleted.',
-        timer: 2000,
-        showConfirmButton: false
-    });
+    showToast('Vaccine batch has been deleted.', 'warn');
 }
 
 // Add new vaccine batch
@@ -279,14 +260,7 @@ document.getElementById('addVaccineBatchForm').addEventListener('submit', functi
     const modal = bootstrap.Modal.getInstance(document.getElementById('addVaccineBatchModal'));
     modal.hide();
     this.reset();
-    
-    Swal.fire({
-        icon: 'success',
-        title: 'Success!',
-        text: 'Vaccine batch added successfully!',
-        timer: 2000,
-        showConfirmButton: false
-    });
+    showToast('Vaccine batch added successfully!');
 });
 
 // Add new vaccine
@@ -299,13 +273,7 @@ document.getElementById('addVaccineForm').addEventListener('submit', function(e)
     const modal = bootstrap.Modal.getInstance(document.getElementById('addVaccineModal'));
     modal.hide();
     this.reset();
-    
-    Swal.fire({
-        icon: 'success',
-        title: 'Success!',
-        html: `Vaccine "<strong>${vaccineName}</strong>" added successfully!<br>You can now add batches for this vaccine.`,
-        confirmButtonColor: '#1CDB88'
-    });
+    showToast(`Vaccine "${vaccineName}" added successfully!`);
 });
 
 // Search functionality
@@ -326,8 +294,7 @@ document.getElementById('searchVaccine').addEventListener('input', function(e) {
     
     if (filtered.length === 0) {
         tbody.innerHTML = '<tr><td colspan="6" class="text-center text-muted">No results found</td></tr>';
-        document.getElementById('paginationControls').innerHTML = '';
-        document.getElementById('paginationInfo').textContent = 'Showing 0 to 0 of 0 results';
+        document.getElementById('paginationWrap').innerHTML = 'Showing <strong>0-0</strong> of <strong>0</strong> results';
         return;
     }
     
@@ -359,8 +326,7 @@ document.getElementById('searchVaccine').addEventListener('input', function(e) {
     }).join('');
     
     // Update showing text for search results
-    document.getElementById('paginationInfo').textContent = `Showing 1 to ${filtered.length} of ${filtered.length} results`;
-    document.getElementById('paginationControls').innerHTML = '';
+    document.getElementById('paginationWrap').innerHTML = `Showing <strong>1-${filtered.length}</strong> of <strong>${filtered.length}</strong> results`;
 });
 
 // Set date constraints on page load

@@ -44,8 +44,7 @@ navLinks.forEach(link => {
 // Load vaccines
 function loadVaccines() {
     const tbody = document.getElementById('vaccineTableBody');
-    const paginationInfo = document.getElementById('paginationInfo');
-    const paginationControls = document.getElementById('paginationControls');
+    const paginationWrap = document.getElementById('paginationWrap');
     const totalItems = vaccineData.length;
     const totalPages = Math.max(1, Math.ceil(totalItems / rowsPerPage));
 
@@ -59,8 +58,7 @@ function loadVaccines() {
     
     if (totalItems === 0) {
         tbody.innerHTML = '<tr><td colspan="3" class="text-center text-muted">No vaccines found</td></tr>';
-        paginationInfo.textContent = 'Showing 0 to 0 of 0 results';
-        paginationControls.innerHTML = '';
+        paginationWrap.innerHTML = 'Showing <strong>0-0</strong> of <strong>0</strong> results';
         return;
     }
     
@@ -81,36 +79,30 @@ function loadVaccines() {
 
     const showingFrom = startIndex + 1;
     const showingTo = Math.min(endIndex, totalItems);
-    paginationInfo.textContent = `Showing ${showingFrom} to ${showingTo} of ${totalItems} results`;
-    paginationControls.innerHTML = renderPagination(totalPages);
+    paginationWrap.innerHTML = renderPagination(totalPages, showingFrom, showingTo, totalItems);
 }
 
-function renderPagination(totalPages) {
-    let controls = `
-        <li class="page-item ${currentPage === 1 ? 'disabled' : ''}">
-            <button type="button" class="page-link" aria-label="Previous" onclick="goToPage(${currentPage - 1})">
-                <span aria-hidden="true">&laquo;</span>
-            </button>
-        </li>
+function renderPagination(totalPages, showingFrom, showingTo, totalItems) {
+    let buttons = `
+        <button class="pg-btn" onclick="goToPage(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''}>
+            <i class="bi bi-chevron-left"></i>
+        </button>
     `;
 
     for (let page = 1; page <= totalPages; page++) {
-        controls += `
-            <li class="page-item ${page === currentPage ? 'active' : ''}">
-                <button type="button" class="page-link" onclick="goToPage(${page})">${page}</button>
-            </li>
-        `;
+        buttons += `<button class="pg-btn ${page === currentPage ? 'active' : ''}" onclick="goToPage(${page})">${page}</button>`;
     }
 
-    controls += `
-        <li class="page-item ${currentPage === totalPages ? 'disabled' : ''}">
-            <button type="button" class="page-link" aria-label="Next" onclick="goToPage(${currentPage + 1})">
-                <span aria-hidden="true">&raquo;</span>
-            </button>
-        </li>
+    buttons += `
+        <button class="pg-btn" onclick="goToPage(${currentPage + 1})" ${currentPage === totalPages ? 'disabled' : ''}>
+            <i class="bi bi-chevron-right"></i>
+        </button>
     `;
 
-    return controls;
+    return `
+        <span>Showing <strong>${showingFrom}-${showingTo}</strong> of <strong>${totalItems}</strong> results</span>
+        <div class="pagination-btns">${buttons}</div>
+    `;
 }
 
 function goToPage(page) {
@@ -118,6 +110,16 @@ function goToPage(page) {
     if (page < 1 || page > totalPages) return;
     currentPage = page;
     loadVaccines();
+}
+
+function showToast(msg, type = 'ok') {
+    const c = document.getElementById('toast-container');
+    if (!c) return;
+    const t = document.createElement('div');
+    t.className = `toast-item ${type === 'warn' ? 'warn' : ''}`;
+    t.innerHTML = `<i class="bi ${type === 'warn' ? 'bi-slash-circle' : 'bi-check-circle-fill'}"></i> ${msg}`;
+    c.appendChild(t);
+    setTimeout(() => t.remove(), 3000);
 }
 
 // Add vaccine
@@ -137,14 +139,7 @@ document.getElementById('addVaccineForm').addEventListener('submit', function(e)
     const modal = bootstrap.Modal.getInstance(document.getElementById('addVaccineModal'));
     modal.hide();
     this.reset();
-    
-    Swal.fire({
-        icon: 'success',
-        title: 'Success!',
-        text: 'Vaccine added successfully!',
-        timer: 2000,
-        showConfirmButton: false
-    });
+    showToast('Vaccine added successfully!');
 });
 
 // Edit vaccine
@@ -176,14 +171,7 @@ document.getElementById('editVaccineForm').addEventListener('submit', function(e
     
     const modal = bootstrap.Modal.getInstance(document.getElementById('editVaccineModal'));
     modal.hide();
-    
-    Swal.fire({
-        icon: 'success',
-        title: 'Updated!',
-        text: 'Vaccine updated successfully!',
-        timer: 2000,
-        showConfirmButton: false
-    });
+    showToast('Vaccine updated successfully!');
 });
 
 // Confirm delete vaccine
@@ -211,14 +199,7 @@ function deleteVaccine(id) {
         currentPage = totalPages;
     }
     loadVaccines();
-    
-    Swal.fire({
-        icon: 'success',
-        title: 'Deleted!',
-        text: 'Vaccine has been deleted.',
-        timer: 2000,
-        showConfirmButton: false
-    });
+    showToast('Vaccine has been deleted.', 'warn');
 }
 
 // Initialize

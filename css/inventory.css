@@ -165,24 +165,96 @@ main {
 
 /* Pagination Styles */
 .pagination-wrap {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 0 4px;
+    font-size: .83rem;
+    color: #6c757d;
     border-top: 1px solid #e9ecef;
     margin-top: 0.75rem;
-    padding-top: 0.75rem;
 }
 
-.pagination-info {
-    font-size: 0.875rem;
-    color: #6c757d;
+.pagination-btns {
+    display: flex;
+    gap: 4px;
 }
 
-.pagination .page-link {
-    color: #495057;
-}
-
-.pagination .page-item.active .page-link {
-    background-color: #1CDB88;
-    border-color: #1CDB88;
+.pg-btn {
+    width: 34px;
+    height: 34px;
+    border-radius: 6px;
+    border: 1px solid #dee2e6;
+    background: #fff;
+    cursor: pointer;
+    font-size: .82rem;
+    font-weight: 600;
     color: #212529;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all .15s;
+}
+
+.pg-btn:hover {
+    background: #f0fdf8;
+    border-color: #1CDB88;
+    color: #1CDB88;
+}
+
+.pg-btn.active {
+    background: #1CDB88;
+    color: #fff;
+    border-color: #1CDB88;
+}
+
+.pg-btn:disabled {
+    opacity: .35;
+    cursor: not-allowed;
+}
+
+/* Toast */
+#toast-container {
+    position: fixed;
+    top: 80px;
+    right: 20px;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.toast-item {
+    background: #fff;
+    border-radius: 8px;
+    padding: 11px 16px;
+    box-shadow: 0 4px 16px rgba(0,0,0,.13);
+    font-size: .85rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    border-left: 4px solid #1CDB88;
+    animation: toastIn .25s ease;
+    min-width: 240px;
+}
+
+.toast-item.warn {
+    border-color: #dc3545;
+}
+
+.toast-item i {
+    color: #1CDB88;
+    font-size: .95rem;
+}
+
+.toast-item.warn i {
+    color: #dc3545;
+}
+
+@keyframes toastIn {
+    from { opacity: 0; transform: translateX(20px); }
+    to { opacity: 1; transform: translateX(0); }
 }
 
 /* SweetAlert2 Custom Styling */

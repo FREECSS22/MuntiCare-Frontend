@@ -130,18 +130,13 @@
                         </table>
                     </div>
                     
-                    <div class="pagination-wrap">
-                        <div class="d-flex flex-column flex-sm-row align-items-sm-center justify-content-between gap-2">
-                            <p class="pagination-info mb-0" id="paginationInfo">Showing 0 to 0 of 0 results</p>
-                            <nav aria-label="Inventory pagination">
-                                <ul class="pagination pagination-sm mb-0" id="paginationControls"></ul>
-                            </nav>
-                        </div>
-                    </div>
+                    <div class="pagination-wrap" id="paginationWrap"></div>
                 </div>
             </div>
         </div>
     </main>
+
+    <div id="toast-container" aria-live="polite" aria-atomic="true"></div>
 
     <!-- Add New Vaccine Modal -->
     <div class="modal fade" id="addVaccineModal" tabindex="-1" aria-hidden="true">
