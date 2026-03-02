@@ -59,8 +59,8 @@
             <div class="menu-section">
                 <p class="menu-label">Administration</p>
                 <ul class="nav flex-column">
-                    <li><a href="#" class="nav-link"><i class="bi bi-people"></i> User Management</a></li>
-                    <li><a href="#" class="nav-link"><i class="bi bi-chat-left-text"></i> Feedbacks</a></li>
+                    <li><a href="usermanagement.html" class="nav-link"><i class="bi bi-people"></i> User Management</a></li>
+                    <li><a href="feedbacks.html" class="nav-link"><i class="bi bi-chat-left-text"></i> Feedbacks</a></li>
                 </ul>
             </div>
         </nav>
@@ -74,9 +74,9 @@
                 <button class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#addVaccineModal">
                     <i class="bi bi-plus-circle me-1"></i> Add New Vaccine
                 </button>
-                <button class="btn btn-warning btn-sm" onclick="showVaccineListInfo()">
+                <a class="btn btn-warning btn-sm" href="vaccine.html">
                     <i class="bi bi-list-ul me-1"></i> Vaccine List
-                </button>
+                </a>
             </div>
         </div>
         
@@ -130,34 +130,12 @@
                         </table>
                     </div>
                     
-                    <!-- Pagination -->
-                    <div class="d-flex align-items-center justify-content-between border-top pt-3 mt-3">
-                        <!-- Mobile pagination -->
-                        <div class="d-flex flex-fill justify-content-between d-sm-none">
-                            <button class="btn btn-sm btn-outline-secondary" id="mobilePrev" onclick="changePage(currentPage - 1)">Previous</button>
-                            <button class="btn btn-sm btn-outline-secondary" id="mobileNext" onclick="changePage(currentPage + 1)">Next</button>
-                        </div>
-                        
-                        <!-- Desktop pagination -->
-                        <div class="d-none d-sm-flex flex-fill align-items-center justify-content-between">
-                            <div>
-                                <p class="text-sm text-muted mb-0">
-                                    Showing
-                                    <span class="fw-medium" id="showingFrom">1</span>
-                                    to
-                                    <span class="fw-medium" id="showingTo">5</span>
-                                    of
-                                    <span class="fw-medium" id="totalItems">10</span>
-                                    results
-                                </p>
-                            </div>
-                            <div>
-                                <nav aria-label="Pagination">
-                                    <ul class="pagination mb-0" id="pagination">
-                                        <!-- Pagination will be populated here -->
-                                    </ul>
-                                </nav>
-                            </div>
+                    <div class="pagination-wrap">
+                        <div class="d-flex flex-column flex-sm-row align-items-sm-center justify-content-between gap-2">
+                            <p class="pagination-info mb-0" id="paginationInfo">Showing 0 to 0 of 0 results</p>
+                            <nav aria-label="Inventory pagination">
+                                <ul class="pagination pagination-sm mb-0" id="paginationControls"></ul>
+                            </nav>
                         </div>
                     </div>
                 </div>

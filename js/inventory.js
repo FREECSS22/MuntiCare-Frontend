@@ -15,16 +15,6 @@ let vaccineData = [
 let currentPage = 1;
 const itemsPerPage = 5;
 
-// Show Vaccine List Info
-function showVaccineListInfo() {
-    Swal.fire({
-        icon: 'info',
-        title: 'Vaccine List',
-        text: 'This will navigate to the vaccine list page.',
-        confirmButtonColor: '#1CDB88'
-    });
-}
-
 // Sidebar toggle functionality
 const menuToggle = document.getElementById('menuToggle');
 const sidebar = document.getElementById('sidebar');
@@ -82,10 +72,8 @@ function displayVaccineBatches(page = 1) {
     
     if (vaccineData.length === 0) {
         tbody.innerHTML = '<tr><td colspan="6" class="text-center text-muted">No vaccine batches found</td></tr>';
-        document.getElementById('pagination').innerHTML = '';
-        document.getElementById('showingFrom').textContent = '0';
-        document.getElementById('showingTo').textContent = '0';
-        document.getElementById('totalItems').textContent = '0';
+        document.getElementById('paginationControls').innerHTML = '';
+        document.getElementById('paginationInfo').textContent = 'Showing 0 to 0 of 0 results';
         return;
     }
 
@@ -122,49 +110,28 @@ function displayVaccineBatches(page = 1) {
 
 function updatePagination() {
     const totalPages = Math.ceil(vaccineData.length / itemsPerPage);
-    const pagination = document.getElementById('pagination');
+    const pagination = document.getElementById('paginationControls');
+    const paginationInfo = document.getElementById('paginationInfo');
     
     if (vaccineData.length === 0) {
         pagination.innerHTML = '';
+        paginationInfo.textContent = 'Showing 0 to 0 of 0 results';
         return;
     }
     
     // Update "Showing X to Y of Z results"
     const showingFrom = vaccineData.length > 0 ? (currentPage - 1) * itemsPerPage + 1 : 0;
     const showingTo = Math.min(currentPage * itemsPerPage, vaccineData.length);
-    document.getElementById('showingFrom').textContent = showingFrom;
-    document.getElementById('showingTo').textContent = showingTo;
-    document.getElementById('totalItems').textContent = vaccineData.length;
-    
-    // Update mobile buttons
-    const mobilePrev = document.getElementById('mobilePrev');
-    const mobileNext = document.getElementById('mobileNext');
-    if (currentPage === 1) {
-        mobilePrev.classList.add('disabled');
-        mobilePrev.disabled = true;
-    } else {
-        mobilePrev.classList.remove('disabled');
-        mobilePrev.disabled = false;
-    }
-    if (currentPage === totalPages) {
-        mobileNext.classList.add('disabled');
-        mobileNext.disabled = true;
-    } else {
-        mobileNext.classList.remove('disabled');
-        mobileNext.disabled = false;
-    }
+    paginationInfo.textContent = `Showing ${showingFrom} to ${showingTo} of ${vaccineData.length} results`;
     
     let paginationHTML = '';
     
     // Previous button
     paginationHTML += `
         <li class="page-item ${currentPage === 1 ? 'disabled' : ''}">
-            <a class="page-link" href="#" onclick="changePage(${currentPage - 1}); return false;">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" style="width: 20px; height: 20px;">
-                    <path fill-rule="evenodd" d="M11.78 5.22a.75.75 0 0 1 0 1.06L8.06 10l3.72 3.72a.75.75 0 1 1-1.06 1.06l-4.25-4.25a.75.75 0 0 1 0-1.06l4.25-4.25a.75.75 0 0 1 1.06 0Z" clip-rule="evenodd" />
-                </svg>
-                <span class="visually-hidden">Previous</span>
-            </a>
+            <button type="button" class="page-link" aria-label="Previous" onclick="changePage(${currentPage - 1})">
+                <span aria-hidden="true">&laquo;</span>
+            </button>
         </li>
     `;
     
@@ -172,7 +139,7 @@ function updatePagination() {
     for (let i = 1; i <= totalPages; i++) {
         paginationHTML += `
             <li class="page-item ${currentPage === i ? 'active' : ''}">
-                <a class="page-link" href="#" onclick="changePage(${i}); return false;">${i}</a>
+                <button type="button" class="page-link" onclick="changePage(${i})">${i}</button>
             </li>
         `;
     }
@@ -180,12 +147,9 @@ function updatePagination() {
     // Next button
     paginationHTML += `
         <li class="page-item ${currentPage === totalPages ? 'disabled' : ''}">
-            <a class="page-link" href="#" onclick="changePage(${currentPage + 1}); return false;">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" style="width: 20px; height: 20px;">
-                    <path fill-rule="evenodd" d="M8.22 5.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 0 1-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" />
-                </svg>
-                <span class="visually-hidden">Next</span>
-            </a>
+            <button type="button" class="page-link" aria-label="Next" onclick="changePage(${currentPage + 1})">
+                <span aria-hidden="true">&raquo;</span>
+            </button>
         </li>
     `;
     
@@ -362,10 +326,8 @@ document.getElementById('searchVaccine').addEventListener('input', function(e) {
     
     if (filtered.length === 0) {
         tbody.innerHTML = '<tr><td colspan="6" class="text-center text-muted">No results found</td></tr>';
-        document.getElementById('pagination').innerHTML = '';
-        document.getElementById('showingFrom').textContent = '0';
-        document.getElementById('showingTo').textContent = '0';
-        document.getElementById('totalItems').textContent = '0';
+        document.getElementById('paginationControls').innerHTML = '';
+        document.getElementById('paginationInfo').textContent = 'Showing 0 to 0 of 0 results';
         return;
     }
     
@@ -397,10 +359,8 @@ document.getElementById('searchVaccine').addEventListener('input', function(e) {
     }).join('');
     
     // Update showing text for search results
-    document.getElementById('showingFrom').textContent = filtered.length > 0 ? '1' : '0';
-    document.getElementById('showingTo').textContent = filtered.length;
-    document.getElementById('totalItems').textContent = filtered.length;
-    document.getElementById('pagination').innerHTML = '';
+    document.getElementById('paginationInfo').textContent = `Showing 1 to ${filtered.length} of ${filtered.length} results`;
+    document.getElementById('paginationControls').innerHTML = '';
 });
 
 // Set date constraints on page load

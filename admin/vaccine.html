@@ -1,652 +1,184 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MuntiCare - Vaccine Management</title>
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
-<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
-<style>
-body { margin:0; font-family:Arial,sans-serif; background:#f0f0f0; }
-
-/* Top Navbar */
-.top-navbar {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 70px;
-    background: white;
-    border-bottom: 1px solid #e0e0e0;
-    padding: 0 2rem;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    z-index: 1030;
-}
-
-.top-navbar h4 {
-    margin-left: 240px;
-    font-size: 1.5rem;
-    font-weight: 600;
-    color: #212529;
-}
-
-.menu-toggle {
-    background: none;
-    border: none;
-    font-size: 1.5rem;
-    cursor: pointer;
-    padding: 0.5rem;
-    color: #212529;
-    display: none;
-}
-
-.user-dropdown .dropdown-toggle {
-    background: transparent;
-    border: none;
-    padding: 0.25rem;
-}
-
-/* Sidebar */
-.sidebar { 
-    position: fixed;
-    left: 0;
-    top: 0;
-    width: 265px;
-    height: 100vh;
-    background-color: #1CDB88;
-    display: flex;
-    flex-direction: column;
-    overflow-y: auto;
-    z-index: 1040;
-    transition: transform 0.3s ease;
-}
-
-.sidebar-header { 
-    display: flex; 
-    align-items: center; 
-    gap: 0.75rem; 
-    padding: 1.5rem 1.25rem;
-    border-bottom: 1px solid rgba(0,0,0,0.05);
-}
-
-.sidebar-header .logo { 
-    width: 45px; 
-    height: 45px;
-}
-
-.sidebar-header-text h5 {
-    margin: 0;
-    font-size: 1.125rem;
-    font-weight: 600;
-    color: #212529;
-    line-height: 1.2;
-}
-
-.sidebar-header-text small {
-    font-size: 0.8125rem;
-    color: #212529;
-    opacity: 0.75;
-}
-
-.sidebar-nav {
-    padding: 1.5rem 1rem;
-}
-
-.menu-label { 
-    font-size: 0.6875rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    color: #212529;
-    opacity: 0.7;
-    margin-bottom: 0.5rem;
-    padding-left: 0.75rem;
-}
-
-.nav-link { 
-    color: #212529;
-    padding: 0.625rem 0.75rem;
-    border-radius: 6px;
-    display: flex;
-    align-items: center;
-    gap: 0.625rem;
-    transition: all 0.2s;
-    text-decoration: none;
-    font-size: 0.9375rem;
-    font-weight: 400;
-    margin-bottom: 0.25rem;
-}
-
-.nav-link i {
-    font-size: 1rem;
-    width: 18px;
-}
-
-.nav-link:hover { 
-    background-color: rgba(0, 0, 0, 0.08);
-    color: #000;
-}
-
-.nav-link.active { 
-    background-color: rgba(0, 0, 0, 0.12);
-    font-weight: 500;
-    color: #000;
-}
-
-.menu-section {
-    margin-bottom: 1.75rem;
-}
-
-/* Main content */
-main { 
-    margin-left: 265px;
-    margin-top: 70px;
-    padding: 2rem;
-    transition: margin-left 0.3s ease;
-}
-
-.card { 
-    border-radius: 8px;
-    border: 1px solid #e0e0e0;
-    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
-}
-
-.table th {
-    font-weight: 600;
-    white-space: nowrap;
-}
-
-.table td {
-    white-space: nowrap;
-}
-
-.pagination-wrap {
-    border-top: 1px solid #e9ecef;
-    margin-top: 0.75rem;
-    padding-top: 0.75rem;
-}
-
-.pagination-info {
-    font-size: 0.875rem;
-    color: #6c757d;
-}
-
-.pagination .page-link {
-    color: #495057;
-}
-
-.pagination .page-item.active .page-link {
-    background-color: #1CDB88;
-    border-color: #1CDB88;
-    color: #212529;
-}
-
-/* SweetAlert2 Custom Styling */
-.swal2-popup {
-    font-family: Arial, sans-serif;
-}
-
-.swal2-confirm {
-    background-color: #1CDB88 !important;
-}
-
-.swal2-cancel {
-    background-color: #6c757d !important;
-}
-
-/* Mobile styles */
-@media (max-width: 768px) {
-    .menu-toggle {
-        display: block;
-    }
-
-    .sidebar {
-        transform: translateX(-100%);
-    }
-
-    .sidebar.show {
-        transform: translateX(0);
-    }
-
-    main {
-        margin-left: 0;
-    }
-
-    .top-navbar {
-        padding: 0 1rem;
-    }
-
-    .top-navbar h4 {
-        font-size: 1.25rem;
-        margin: 0px;
-    }
-
-    .sidebar-overlay {
-        display: none;
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: rgba(0,0,0,0.5);
-        z-index: 1030;
-    }
-
-    .sidebar-overlay.show {
-        display: block;
-    }
-}
-
-@media (min-width: 769px) and (max-width: 1024px) {
-    .sidebar {
-        width: 240px;
-    }
-
-    main {
-        margin-left: 240px;
-    }
-}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MuntiCare\</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" href="../css/vaccine.css">
+    <link rel="shortcut icon" href="../image/favicon.ico" type="image/x-icon">
 </head>
 <body>
-
-<!-- Top Navbar -->
-<nav class="top-navbar">
-    <div class="d-flex align-items-center gap-3">
-        <button class="menu-toggle" id="menuToggle">
-            <i class="bi bi-list"></i>
-        </button>
-        <h4>Vaccine Management</h4>
-    </div>
-
-    <div class="d-flex align-items-center gap-3">
-        <div class="dropdown user-dropdown">
-            <button class="dropdown-toggle d-flex align-items-center" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                <i class="bi bi-person-circle fs-4"></i>
+    <!-- Top Navbar -->
+    <nav class="top-navbar">
+        <div class="d-flex align-items-center gap-3">
+            <button class="menu-toggle" id="menuToggle">
+                <i class="bi bi-list"></i>
             </button>
-            <ul class="dropdown-menu dropdown-menu-end">
-                <li><a class="dropdown-item" href="#">Profile</a></li>
-                <li><a class="dropdown-item" href="#">Settings</a></li>
-                <li><hr class="dropdown-divider"></li>
-                <li><a class="dropdown-item" href="../index.html">Logout</a></li>
-            </ul>
-        </div>
-    </div>
-</nav>
-
-<!-- Sidebar Overlay (mobile only) -->
-<div class="sidebar-overlay" id="sidebarOverlay"></div>
-
-<!-- Sidebar -->
-<aside class="sidebar" id="sidebar">
-    <header class="sidebar-header">
-        <img src="../image/MuntiCare Logo.png" alt="Logo" class="logo">
-        <div class="sidebar-header-text">
-            <h5>MuntiCare</h5>
-            <small>Health Management</small>
-        </div>
-    </header>
-
-    <nav class="sidebar-nav">
-        <div class="menu-section">
-            <p class="menu-label">Main Menu</p>
-            <ul class="nav flex-column">
-                <li><a href="overview.html" class="nav-link"><i class="bi bi-house-door"></i> Overview</a></li>
-                <li><a href="inventory.html" class="nav-link"><i class="bi bi-box"></i> Inventory</a></li>
-            </ul>
+            <h4>Vaccine Management</h4>
         </div>
 
-        <div class="menu-section">
-            <p class="menu-label">Administration</p>
-            <ul class="nav flex-column">
-                <li><a href="#" class="nav-link"><i class="bi bi-people"></i> User Management</a></li>
-                <li><a href="#" class="nav-link"><i class="bi bi-chat-left-text"></i> Feedbacks</a></li>
-            </ul>
+        <div class="d-flex align-items-center gap-3">
+            <div class="dropdown user-dropdown">
+                <button class="dropdown-toggle d-flex align-items-center" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="bi bi-person-circle fs-4"></i>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end">
+                    <li><a class="dropdown-item" href="#">Profile</a></li>
+                    <li><a class="dropdown-item" href="#">Settings</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item" href="../index.html">Logout</a></li>
+                </ul>
+            </div>
         </div>
     </nav>
-</aside>
 
-<!-- Main content -->
-<main>
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <h5 class="fw-bold mb-0">Available Vaccines</h5>
-        <button class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#addVaccineModal">
-            <i class="bi bi-plus-circle me-1"></i> Add Vaccine
-        </button>
-    </div>
+    <!-- Sidebar Overlay (mobile only) -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
-    <div class="bg-white shadow-sm rounded p-3">
-        <div class="table-responsive">
-            <table class="table table-hover align-middle" id="vaccineTable">
-                <thead class="table-light">
-                    <tr>
-                        <th>Name</th>
-                        <th>Description</th>
-                        <th class="text-center">Actions</th>
-                    </tr>
-                </thead>
-                <tbody id="vaccineTableBody">
-                    <tr>
-                        <td colspan="3" class="text-center">
-                            <div class="spinner-border text-primary" role="status">
-                                <span class="visually-hidden">Loading...</span>
-                            </div>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-        <div class="pagination-wrap">
-            <div class="d-flex flex-column flex-sm-row align-items-sm-center justify-content-between gap-2">
-                <p class="pagination-info mb-0" id="paginationInfo">Showing 0 to 0 of 0 results</p>
-                <nav aria-label="Vaccine table pagination">
-                    <ul class="pagination pagination-sm mb-0" id="paginationControls"></ul>
-                </nav>
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        <header class="sidebar-header">
+            <img src="../image/MuntiCare Logo.png" alt="Logo" class="logo">
+            <div class="sidebar-header-text">
+                <h5>MuntiCare</h5>
+                <small>Health Management</small>
             </div>
-        </div>
-    </div>
-</main>
+        </header>
 
-<!-- Add Vaccine Modal -->
-<div class="modal fade" id="addVaccineModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header" style="background-color: #1CDB88; color: white;">
-                <h5 class="modal-title">Add New Vaccine</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        <nav class="sidebar-nav">
+            <div class="menu-section">
+                <p class="menu-label">Main Menu</p>
+                <ul class="nav flex-column">
+                    <li><a href="overview.html" class="nav-link"><i class="bi bi-house-door"></i> Overview</a></li>
+                    <li><a href="inventory.html" class="nav-link"><i class="bi bi-box"></i> Inventory</a></li>
+                </ul>
             </div>
-            <div class="modal-body">
-                <form id="addVaccineForm">
-                    <div class="mb-3">
-                        <label class="form-label fw-semibold">Vaccine Name <span class="text-danger">*</span></label>
-                        <input type="text" class="form-control" id="vaccineName" required placeholder="e.g., Influenza (Flu) Vaccine">
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label fw-semibold">Description</label>
-                        <textarea class="form-control" id="vaccineDescription" rows="3" placeholder="Description of the vaccine..."></textarea>
-                    </div>
-                    <div class="d-grid gap-2">
-                        <button type="submit" class="btn btn-dark">
-                            <i class="bi bi-check-circle me-1"></i> Add Vaccine
-                        </button>
-                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
-                            Cancel
-                        </button>
-                    </div>
-                </form>
+
+            <div class="menu-section">
+                <p class="menu-label">Administration</p>
+                <ul class="nav flex-column">
+                    <li><a href="usermanagement.html" class="nav-link"><i class="bi bi-people"></i> User Management</a></li>
+                    <li><a href="feedbacks.html" class="nav-link"><i class="bi bi-chat-left-text"></i> Feedbacks</a></li>
+                </ul>
             </div>
-        </div>
-    </div>
-</div>
+        </nav>
+    </aside>
 
-<!-- Edit Vaccine Modal -->
-<div class="modal fade" id="editVaccineModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header" style="background-color: #1CDB88; color: white;">
-                <h5 class="modal-title">Edit Vaccine</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
-                <form id="editVaccineForm">
-                    <input type="hidden" id="edit_vaccine_id">
-                    <div class="mb-3">
-                        <label class="form-label fw-semibold">Vaccine Name <span class="text-danger">*</span></label>
-                        <input type="text" class="form-control" id="edit_name" required>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label fw-semibold">Description</label>
-                        <textarea class="form-control" id="edit_description" rows="3"></textarea>
-                    </div>
-                    <div class="d-grid gap-2">
-                        <button type="submit" class="btn btn-dark">
-                            <i class="bi bi-save me-1"></i> Update Vaccine
-                        </button>
-                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
-                            Cancel
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Bootstrap JS -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
-<!-- SweetAlert2 -->
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-<script>
-// Dummy vaccine data
-let vaccineData = [
-    { id: 1, name: 'Influenza (Flu) Vaccine', description: 'Annual flu vaccine for seasonal influenza prevention' },
-    { id: 2, name: 'Oral Polio Vaccine (OPV)', description: 'Live attenuated vaccine for polio prevention' },
-    { id: 3, name: 'COVID-19 mRNA Vaccine (Pfizer-BioNTech)', description: 'mRNA vaccine for COVID-19 prevention' },
-    { id: 4, name: 'BCG (Bacillus Calmette–Guérin)', description: 'Vaccine primarily used against tuberculosis' },
-    { id: 5, name: 'Rabies Vaccine', description: 'Vaccine for rabies prevention and post-exposure treatment' },
-    { id: 6, name: 'DPT (Diphtheria, Pertussis, Tetanus)', description: 'Combined vaccine for three diseases' },
-    { id: 7, name: 'Varicella (Chickenpox) Vaccine', description: 'Vaccine to prevent chickenpox' },
-    { id: 8, name: 'Inactivated Polio Vaccine (IPV)', description: 'Inactivated poliovirus vaccine' },
-    { id: 9, name: 'MMR Vaccine', description: 'Combined vaccine for Measles, Mumps, and Rubella' },
-    { id: 10, name: 'Hepatitis B Vaccine', description: 'Vaccine to prevent Hepatitis B infection' }
-];
-
-let currentPage = 1;
-const rowsPerPage = 5;
-
-// Sidebar toggle functionality
-const menuToggle = document.getElementById('menuToggle');
-const sidebar = document.getElementById('sidebar');
-const sidebarOverlay = document.getElementById('sidebarOverlay');
-
-menuToggle.addEventListener('click', () => {
-    sidebar.classList.toggle('show');
-    sidebarOverlay.classList.toggle('show');
-});
-
-sidebarOverlay.addEventListener('click', () => {
-    sidebar.classList.remove('show');
-    sidebarOverlay.classList.remove('show');
-});
-
-// Close sidebar when clicking a link on mobile
-const navLinks = document.querySelectorAll('.sidebar .nav-link');
-navLinks.forEach(link => {
-    link.addEventListener('click', () => {
-        if (window.innerWidth <= 768) {
-            sidebar.classList.remove('show');
-            sidebarOverlay.classList.remove('show');
-        }
-    });
-});
-
-// Load vaccines
-function loadVaccines() {
-    const tbody = document.getElementById('vaccineTableBody');
-    const paginationInfo = document.getElementById('paginationInfo');
-    const paginationControls = document.getElementById('paginationControls');
-    const totalItems = vaccineData.length;
-    const totalPages = Math.max(1, Math.ceil(totalItems / rowsPerPage));
-
-    if (currentPage > totalPages) {
-        currentPage = totalPages;
-    }
-
-    const startIndex = (currentPage - 1) * rowsPerPage;
-    const endIndex = startIndex + rowsPerPage;
-    const paginatedData = vaccineData.slice(startIndex, endIndex);
-    
-    if (totalItems === 0) {
-        tbody.innerHTML = '<tr><td colspan="3" class="text-center text-muted">No vaccines found</td></tr>';
-        paginationInfo.textContent = 'Showing 0 to 0 of 0 results';
-        paginationControls.innerHTML = '';
-        return;
-    }
-    
-    tbody.innerHTML = paginatedData.map(v => `
-        <tr>
-            <td>${v.name}</td>
-            <td>${v.description || '—'}</td>
-            <td class="text-center">
-                <button class="btn btn-sm btn-outline-primary" onclick="editVaccine(${v.id})">
-                    <i class="bi bi-pencil"></i>
-                </button>
-                <button class="btn btn-sm btn-outline-danger" onclick="confirmDeleteVaccine(${v.id})">
-                    <i class="bi bi-trash"></i>
-                </button>
-            </td>
-        </tr>
-    `).join('');
-
-    const showingFrom = startIndex + 1;
-    const showingTo = Math.min(endIndex, totalItems);
-    paginationInfo.textContent = `Showing ${showingFrom} to ${showingTo} of ${totalItems} results`;
-    paginationControls.innerHTML = renderPagination(totalPages);
-}
-
-function renderPagination(totalPages) {
-    let controls = `
-        <li class="page-item ${currentPage === 1 ? 'disabled' : ''}">
-            <button type="button" class="page-link" aria-label="Previous" onclick="goToPage(${currentPage - 1})">
-                <span aria-hidden="true">&laquo;</span>
+    <!-- Main content -->
+    <main>
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h5 class="fw-bold mb-0">Available Vaccines</h5>
+            <button class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#addVaccineModal">
+                <i class="bi bi-plus-circle me-1"></i> Add Vaccine
             </button>
-        </li>
-    `;
+        </div>
 
-    for (let page = 1; page <= totalPages; page++) {
-        controls += `
-            <li class="page-item ${page === currentPage ? 'active' : ''}">
-                <button type="button" class="page-link" onclick="goToPage(${page})">${page}</button>
-            </li>
-        `;
-    }
+        <div class="bg-white shadow-sm rounded p-3">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle" id="vaccineTable">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Name</th>
+                            <th>Description</th>
+                            <th class="text-center">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="vaccineTableBody">
+                        <tr>
+                            <td colspan="3" class="text-center">
+                                <div class="spinner-border text-primary" role="status">
+                                    <span class="visually-hidden">Loading...</span>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="pagination-wrap">
+                <div class="d-flex flex-column flex-sm-row align-items-sm-center justify-content-between gap-2">
+                    <p class="pagination-info mb-0" id="paginationInfo">Showing 0 to 0 of 0 results</p>
+                    <nav aria-label="Vaccine table pagination">
+                        <ul class="pagination pagination-sm mb-0" id="paginationControls"></ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </main>
 
-    controls += `
-        <li class="page-item ${currentPage === totalPages ? 'disabled' : ''}">
-            <button type="button" class="page-link" aria-label="Next" onclick="goToPage(${currentPage + 1})">
-                <span aria-hidden="true">&raquo;</span>
-            </button>
-        </li>
-    `;
+    <!-- Add Vaccine Modal -->
+    <div class="modal fade" id="addVaccineModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header" style="background-color: #1CDB88; color: white;">
+                    <h5 class="modal-title">Add New Vaccine</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="addVaccineForm">
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Vaccine Name <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="vaccineName" required placeholder="e.g., Influenza (Flu) Vaccine">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Description</label>
+                            <textarea class="form-control" id="vaccineDescription" rows="3" placeholder="Description of the vaccine..."></textarea>
+                        </div>
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-dark">
+                                <i class="bi bi-check-circle me-1"></i> Add Vaccine
+                            </button>
+                            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                                Cancel
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 
-    return controls;
-}
+    <!-- Edit Vaccine Modal -->
+    <div class="modal fade" id="editVaccineModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header" style="background-color: #1CDB88; color: white;">
+                    <h5 class="modal-title">Edit Vaccine</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editVaccineForm">
+                        <input type="hidden" id="edit_vaccine_id">
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Vaccine Name <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="edit_name" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Description</label>
+                            <textarea class="form-control" id="edit_description" rows="3"></textarea>
+                        </div>
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-dark">
+                                <i class="bi bi-save me-1"></i> Update Vaccine
+                            </button>
+                            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                                Cancel
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 
-function goToPage(page) {
-    const totalPages = Math.max(1, Math.ceil(vaccineData.length / rowsPerPage));
-    if (page < 1 || page > totalPages) return;
-    currentPage = page;
-    loadVaccines();
-}
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
 
-// Add vaccine
-document.getElementById('addVaccineForm').addEventListener('submit', function(e) {
-    e.preventDefault();
-    
-    const newVaccine = {
-        id: vaccineData.length > 0 ? Math.max(...vaccineData.map(v => v.id)) + 1 : 1,
-        name: document.getElementById('vaccineName').value,
-        description: document.getElementById('vaccineDescription').value
-    };
-    
-    vaccineData.push(newVaccine);
-    currentPage = Math.ceil(vaccineData.length / rowsPerPage);
-    loadVaccines();
-    
-    const modal = bootstrap.Modal.getInstance(document.getElementById('addVaccineModal'));
-    modal.hide();
-    this.reset();
-    
-    Swal.fire({
-        icon: 'success',
-        title: 'Success!',
-        text: 'Vaccine added successfully!',
-        timer: 2000,
-        showConfirmButton: false
-    });
-});
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-// Edit vaccine
-function editVaccine(id) {
-    const vaccine = vaccineData.find(v => v.id === id);
-    if (!vaccine) return;
-    
-    document.getElementById('edit_vaccine_id').value = vaccine.id;
-    document.getElementById('edit_name').value = vaccine.name;
-    document.getElementById('edit_description').value = vaccine.description || '';
-    
-    const modal = new bootstrap.Modal(document.getElementById('editVaccineModal'));
-    modal.show();
-}
-
-// Update vaccine
-document.getElementById('editVaccineForm').addEventListener('submit', function(e) {
-    e.preventDefault();
-    
-    const id = parseInt(document.getElementById('edit_vaccine_id').value);
-    const vaccineIndex = vaccineData.findIndex(v => v.id === id);
-    
-    if (vaccineIndex !== -1) {
-        vaccineData[vaccineIndex].name = document.getElementById('edit_name').value;
-        vaccineData[vaccineIndex].description = document.getElementById('edit_description').value;
-    }
-    
-    loadVaccines();
-    
-    const modal = bootstrap.Modal.getInstance(document.getElementById('editVaccineModal'));
-    modal.hide();
-    
-    Swal.fire({
-        icon: 'success',
-        title: 'Updated!',
-        text: 'Vaccine updated successfully!',
-        timer: 2000,
-        showConfirmButton: false
-    });
-});
-
-// Confirm delete vaccine
-function confirmDeleteVaccine(id) {
-    Swal.fire({
-        title: 'Are you sure?',
-        text: "You won't be able to revert this!",
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#dc3545',
-        cancelButtonColor: '#6c757d',
-        confirmButtonText: 'Yes, delete it!'
-    }).then((result) => {
-        if (result.isConfirmed) {
-            deleteVaccine(id);
-        }
-    });
-}
-
-// Delete vaccine
-function deleteVaccine(id) {
-    vaccineData = vaccineData.filter(v => v.id !== id);
-    const totalPages = Math.max(1, Math.ceil(vaccineData.length / rowsPerPage));
-    if (currentPage > totalPages) {
-        currentPage = totalPages;
-    }
-    loadVaccines();
-    
-    Swal.fire({
-        icon: 'success',
-        title: 'Deleted!',
-        text: 'Vaccine has been deleted.',
-        timer: 2000,
-        showConfirmButton: false
-    });
-}
-
-// Initialize
-document.addEventListener('DOMContentLoaded', () => {
-    loadVaccines();
-});
-</script>
+    <!-- Custom JS -->
+    <script src="../js/vaccine.js"></script>
 </body>
 </html>
