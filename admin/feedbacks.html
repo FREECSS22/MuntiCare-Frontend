@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="../image/favicon.ico" type="image/x-icon">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" href="../css/feedbacks.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.js"></script>
+    <title>MuntiCare</title>
+</head>
+<body>
+    <!-- Top Navbar -->
+    <nav class="top-navbar">
+        <div class="d-flex align-items-center gap-3">
+            <button class="menu-toggle" id="menuToggle">
+                <i class="bi bi-list"></i>
+            </button>
+            <h4>Feedback Management</h4>
+        </div>
+
+        <div class="d-flex align-items-center gap-3">
+            <div class="dropdown user-dropdown">
+                <button class="dropdown-toggle d-flex align-items-center" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="bi bi-person-circle fs-4"></i>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end">
+                    <li><a class="dropdown-item" href="#">Profile</a></li>
+                    <li><a class="dropdown-item" href="#">Settings</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item" href="../auth.html">Logout</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Sidebar Overlay (mobile only) -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        <header class="sidebar-header">
+            <img src="../image/MuntiCare Logo.png" alt="Logo" class="logo">
+            <div class="sidebar-header-text">
+                <h5>MuntiCare</h5>
+                <small>Health Management</small>
+            </div>
+        </header>
+
+        <nav class="sidebar-nav">
+            <div class="menu-section">
+                <p class="menu-label">Main Menu</p>
+                <ul class="nav flex-column">
+                    <li><a href="overview.html" class="nav-link"><i class="bi bi-house-door"></i> Overview</a></li>
+                    <li><a href="inventory.html" class="nav-link"><i class="bi bi-box"></i> Inventory</a></li>
+                </ul>
+            </div>
+
+            <div class="menu-section">
+                <p class="menu-label">Administration</p>
+                <ul class="nav flex-column">
+                    <li><a href="usermanagement.html" class="nav-link"><i class="bi bi-people"></i> User Management</a></li>
+                    <li><a href="feedbacks.html" class="nav-link active"><i class="bi bi-chat-left-text"></i> Feedbacks</a></li>
+                </ul>
+            </div>
+        </nav>
+    </aside>
+</body>
+</html>
