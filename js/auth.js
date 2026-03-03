@@ -15,16 +15,16 @@ const users = [
     { email: "healthcare8@munticare.com", password: "healthcare123", role: "healthcare", route: "healthcare/dashboard.html" },
 
     // 10 Patients
-    { email: "patient1@munticare.com", password: "patient123", role: "patient", route: "patient/dashboard.html" },
-    { email: "patient2@munticare.com", password: "patient123", role: "patient", route: "patient/dashboard.html" },
-    { email: "patient3@munticare.com", password: "patient123", role: "patient", route: "patient/dashboard.html" },
-    { email: "patient4@munticare.com", password: "patient123", role: "patient", route: "patient/dashboard.html" },
-    { email: "patient5@munticare.com", password: "patient123", role: "patient", route: "patient/dashboard.html" },
-    { email: "patient6@munticare.com", password: "patient123", role: "patient", route: "patient/dashboard.html" },
-    { email: "patient7@munticare.com", password: "patient123", role: "patient", route: "patient/dashboard.html" },
-    { email: "patient8@munticare.com", password: "patient123", role: "patient", route: "patient/dashboard.html" },
-    { email: "patient9@munticare.com", password: "patient123", role: "patient", route: "patient/dashboard.html" },
-    { email: "patient10@munticare.com", password: "patient123", role: "patient", route: "patient/dashboard.html" }
+    { email: "patient1@example.com", password: "password", role: "patient", route: "patients/dashboard.html" },
+    { email: "patient2@example.com", password: "password", role: "patient", route: "patients/dashboard.html" },
+    { email: "patient3@example.com", password: "password", role: "patient", route: "patients/dashboard.html" },
+    { email: "patient4@example.com", password: "password", role: "patient", route: "patients/dashboard.html" },
+    { email: "patient5@example.com", password: "password", role: "patient", route: "patients/dashboard.html" },
+    { email: "patient6@example.com", password: "password", role: "patient", route: "patients/dashboard.html" },
+    { email: "patient7@example.com", password: "password", role: "patient", route: "patients/dashboard.html" },
+    { email: "patient8@example.com", password: "password", role: "patient", route: "patients/dashboard.html" },
+    { email: "patient9@example.com", password: "password", role: "patient", route: "patients/dashboard.html" },
+    { email: "patient10@example.com", password: "password", role: "patient", route: "patients/dashboard.html" }
 ];
 
 // DOM Elements
