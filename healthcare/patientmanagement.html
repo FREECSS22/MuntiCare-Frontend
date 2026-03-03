@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Google Fonts - Poppins -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" href="../css/patientmanagement.css">
+    <title>MuntiCare</title>
+</head>
+<body>
+    <!-- Top Navbar -->
+    <nav class="top-navbar">
+        <div class="d-flex align-items-center gap-3">
+            <button class="menu-toggle" id="menuToggle">
+                <i class="bi bi-list"></i>
+            </button>
+            <h4>Patient Management</h4>
+        </div>
+
+        <div class="d-flex align-items-center gap-3">
+            <div class="dropdown user-dropdown">
+                <button class="dropdown-toggle d-flex align-items-center" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="bi bi-person-circle fs-4"></i>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end">
+                    <li><a class="dropdown-item" href="#">Profile</a></li>
+                    <li><a class="dropdown-item" href="#">Settings</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item" href="../auth.html">Logout</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Sidebar Overlay (mobile only) -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        <header class="sidebar-header">
+            <img src="../image/MuntiCare Logo.png" alt="Logo" class="logo">
+            <div class="sidebar-header-text">
+                <h5>MuntiCare</h5>
+                <small>Health Management</small>
+            </div>
+        </header>
+
+        <nav class="sidebar-nav">
+            <div class="menu-section">
+                <p class="menu-label">Main Menu</p>
+                <ul class="nav flex-column">
+                    <li><a href="appointments.html" class="nav-link"><i class="bi bi-calendar-check"></i>Appointments</a></li>
+                    <li><a href="patientmanagement.html" class="nav-link active"><i class="bi bi-box"></i>Patient Management</a></li>
+                </ul>
+            </div>
+        </nav>
+    </aside>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../js/patientmanagement.js"></script>
+</body>
+</html>

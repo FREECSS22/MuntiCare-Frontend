@@ -5,14 +5,14 @@ const users = [
     { email: "admin@munticare.com", password: "password", role: "admin", route: "admin/overview.html" },
 
     //8 Healthcare Workers
-    { email: "healthcare1@munticare.com", password: "healthcare123", role: "healthcare", route: "healthcare/dashboard.html" },
-    { email: "healthcare2@munticare.com", password: "healthcare123", role: "healthcare", route: "healthcare/dashboard.html" },
-    { email: "healthcare3@munticare.com", password: "healthcare123", role: "healthcare", route: "healthcare/dashboard.html" },
-    { email: "healthcare4@munticare.com", password: "healthcare123", role: "healthcare", route: "healthcare/dashboard.html" },
-    { email: "healthcare5@munticare.com", password: "healthcare123", role: "healthcare", route: "healthcare/dashboard.html" },
-    { email: "healthcare6@munticare.com", password: "healthcare123", role: "healthcare", route: "healthcare/dashboard.html" },
-    { email: "healthcare7@munticare.com", password: "healthcare123", role: "healthcare", route: "healthcare/dashboard.html" },
-    { email: "healthcare8@munticare.com", password: "healthcare123", role: "healthcare", route: "healthcare/dashboard.html" },
+    { email: "aiah@munticare.com", password: "password", role: "healthcare", route: "healthcare/appointments.html" },
+    { email: "colet@munticare.com", password: "password", role: "healthcare", route: "healthcare/appointments.html" },
+    { email: "maloi@munticare.com", password: "password", role: "healthcare", route: "healthcare/appointments.html" },
+    { email: "gwen@munticare.com", password: "password", role: "healthcare", route: "healthcare/appointments.html" },
+    { email: "stacey@munticare.com", password: "password", role: "healthcare", route: "healthcare/appointments.html" },
+    { email: "mikha@munticare.com", password: "password", role: "healthcare", route: "healthcare/appointments.html" },
+    { email: "jhoanna@munticare.com", password: "password", role: "healthcare", route: "healthcare/appointments.html" },
+    { email: "sheena@munticare.com", password: "password", role: "healthcare", route: "healthcare/appointments.html" },
 
     // 10 Patients
     { email: "patient1@example.com", password: "password", role: "patient", route: "patients/dashboard.html" },
