@@ -1,4 +1,15 @@
 document.addEventListener("DOMContentLoaded", function() {
+const healthcareProfileByEmail = {
+    "aiah@munticare.com": { staff_id: "1", full_name: "Dr. Maraiah Queen Arceta", specialization: "Pediatrics" },
+    "colet@munticare.com": { staff_id: "2", full_name: "Dr. Nicolette Vergara", specialization: "Internal Medicine" },
+    "maloi@munticare.com": { staff_id: "3", full_name: "Dr. Mary Loi Yves Ricalde", specialization: "Family Medicine" },
+    "gwen@munticare.com": { staff_id: "4", full_name: "Dr. Gweneth Apuli", specialization: "Obstetrics and Gynecology" },
+    "stacey@munticare.com": { staff_id: "5", full_name: "Dr. Stacey Sevilleja", specialization: "Dermatology" },
+    "mikha@munticare.com": { staff_id: "9", full_name: "Dr. Mikhaela Lim", specialization: "Cardiology" },
+    "jhoanna@munticare.com": { staff_id: "10", full_name: "Dr. Jhoanna Robles", specialization: "Orthopedics" },
+    "sheena@munticare.com": { staff_id: "11", full_name: "Dr. Sheena Catacutan", specialization: "Pediatrics" }
+};
+
 // Dummy Users Database
 const users = [
     // 1 Admin
@@ -15,16 +26,16 @@ const users = [
     { email: "sheena@munticare.com", password: "password", role: "healthcare", route: "healthcare/appointments.html" },
 
     // 10 Patients
-    { email: "patient1@example.com", password: "password", role: "patient", route: "patients/dashboard.html" },
-    { email: "patient2@example.com", password: "password", role: "patient", route: "patients/dashboard.html" },
-    { email: "patient3@example.com", password: "password", role: "patient", route: "patients/dashboard.html" },
-    { email: "patient4@example.com", password: "password", role: "patient", route: "patients/dashboard.html" },
-    { email: "patient5@example.com", password: "password", role: "patient", route: "patients/dashboard.html" },
-    { email: "patient6@example.com", password: "password", role: "patient", route: "patients/dashboard.html" },
-    { email: "patient7@example.com", password: "password", role: "patient", route: "patients/dashboard.html" },
-    { email: "patient8@example.com", password: "password", role: "patient", route: "patients/dashboard.html" },
-    { email: "patient9@example.com", password: "password", role: "patient", route: "patients/dashboard.html" },
-    { email: "patient10@example.com", password: "password", role: "patient", route: "patients/dashboard.html" }
+    { email: "mark.james@example.com", password: "password", role: "patient", route: "patients/dashboard.html" },
+    { email: "sarah.williams@example.com", password: "password", role: "patient", route: "patients/dashboard.html" },
+    { email: "robert.brown@example.com", password: "password", role: "patient", route: "patients/dashboard.html" },
+    { email: "john.doe@example.com", password: "password", role: "patient", route: "patients/dashboard.html" },
+    { email: "jane.smith@example.com", password: "password", role: "patient", route: "patients/dashboard.html" },
+    { email: "maria.santos@example.com", password: "password", role: "patient", route: "patients/dashboard.html" },
+    { email: "jose.delacruz@example.com", password: "password", role: "patient", route: "patients/dashboard.html" },
+    { email: "ana.reyes@example.com", password: "password", role: "patient", route: "patients/dashboard.html" },
+    { email: "luis.garcia@example.com", password: "password", role: "patient", route: "patients/dashboard.html" },
+    { email: "clara.mendoza@example.com", password: "password", role: "patient", route: "patients/dashboard.html" }
 ];
 
 // DOM Elements
@@ -109,6 +120,15 @@ toggleBtn.addEventListener("click", function() {
                 timer: 2000,
                 showConfirmButton: false
             }).then(() => {
+                const staffProfile = healthcareProfileByEmail[user.email] || null;
+                localStorage.setItem("munticare_current_user_v1", JSON.stringify({
+                    email: user.email,
+                    role: user.role,
+                    route: user.route,
+                    staff_id: staffProfile?.staff_id || "",
+                    full_name: staffProfile?.full_name || "",
+                    specialization: staffProfile?.specialization || ""
+                }));
                 // Redirect to role-specific route
                 window.location.href = user.route;
             });

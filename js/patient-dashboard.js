@@ -24,8 +24,21 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 });
 
-const patientId = 1;
-const patientIdDetails = 1;
+const patientDirectory = [
+    { id: 1, name: 'Mark James', email: 'mark.james@example.com' },
+    { id: 2, name: 'Sarah Williams', email: 'sarah.williams@example.com' },
+    { id: 3, name: 'Robert Brown', email: 'robert.brown@example.com' },
+    { id: 4, name: 'John Doe', email: 'john.doe@example.com' },
+    { id: 5, name: 'Jane Smith', email: 'jane.smith@example.com' },
+    { id: 6, name: 'Maria Santos', email: 'maria.santos@example.com' },
+    { id: 7, name: 'Jose Delacruz', email: 'jose.delacruz@example.com' },
+    { id: 8, name: 'Ana Reyes', email: 'ana.reyes@example.com' },
+    { id: 9, name: 'Luis Garcia', email: 'luis.garcia@example.com' },
+    { id: 10, name: 'Clara Mendoza', email: 'clara.mendoza@example.com' }
+];
+const patientContext = getCurrentPatientContext();
+const patientId = patientContext.id;
+const patientIdDetails = patientContext.id;
 const maxAppointmentsPerDoctor = 5;
 const demoStorageKey = 'munticare_demo_appointments_v1';
 const feedbackPromptedKey = 'munticare_feedback_prompted_v1';
@@ -35,6 +48,38 @@ let useDemoMode = forceDemoMode;
 let currentAppointmentId = null;
 let feedbackQueue = [];
 let feedbackContextById = {};
+
+function getCurrentPatientContext() {
+    const fallback = patientDirectory[0];
+    const urlPatientId = new URLSearchParams(window.location.search).get('patient_id');
+    if (urlPatientId) {
+        const byUrl = patientDirectory.find((p) => String(p.id) === String(urlPatientId));
+        if (byUrl) return byUrl;
+    }
+    try {
+        const rawSelected = localStorage.getItem('munticare_selected_patient_v1');
+        if (rawSelected) {
+            const selected = JSON.parse(rawSelected);
+            const selectedId = selected?.patientId || selected?.raw?.patient_id;
+            if (selectedId) {
+                const bySelected = patientDirectory.find((p) => String(p.id) === String(selectedId));
+                if (bySelected) return bySelected;
+            }
+        }
+    } catch {
+        // ignore selected patient parse errors
+    }
+    try {
+        const raw = localStorage.getItem('munticare_current_user_v1');
+        if (!raw) return fallback;
+        const current = JSON.parse(raw);
+        if (!current || current.role !== 'patient') return fallback;
+        const matched = patientDirectory.find((p) => p.email === current.email);
+        return matched || fallback;
+    } catch {
+        return fallback;
+    }
+}
 
 document.addEventListener('DOMContentLoaded', function() {
     const today = new Date().toISOString().split('T')[0];
@@ -504,6 +549,15 @@ document.getElementById('appointmentForm')?.addEventListener('submit', async fun
         const newItem = {
             id: Date.now(),
             patient_id: Number(data.patient_id) || patientIdDetails,
+            patient_name: patientContext.name,
+            patient: {
+                id: patientIdDetails,
+                given_name: patientContext.name,
+                user: {
+                    email: patientContext.email,
+                    profile: { full_name: patientContext.name }
+                }
+            },
             staff_id: String(data.staff_id || ''),
             appointment_date: data.appointment_date,
             start_time: data.start_time,

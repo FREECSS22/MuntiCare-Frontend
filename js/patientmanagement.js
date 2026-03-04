@@ -4,6 +4,43 @@ const STORAGE_KEYS = [
     "munticare_appointments",
     "appointments"
 ];
+const DEMO_STORAGE_KEY = "munticare_demo_appointments_v1";
+const LEGACY_PATIENT_LABELS = {
+    "patient1@example.com": "Mark James",
+    "patient2@example.com": "Sarah Williams",
+    "patient3@example.com": "Robert Brown",
+    "patient4@example.com": "John Doe",
+    "patient5@example.com": "Jane Smith",
+    "patient6@example.com": "Maria Santos",
+    "patient7@example.com": "Jose Delacruz",
+    "patient8@example.com": "Ana Reyes",
+    "patient9@example.com": "Luis Garcia",
+    "patient10@example.com": "Clara Mendoza"
+};
+const LEGACY_PATIENT_BY_ID = {
+    "1": "Mark James",
+    "2": "Sarah Williams",
+    "3": "Robert Brown",
+    "4": "John Doe",
+    "5": "Jane Smith",
+    "6": "Maria Santos",
+    "7": "Jose Delacruz",
+    "8": "Ana Reyes",
+    "9": "Luis Garcia",
+    "10": "Clara Mendoza"
+};
+const LEGACY_EMAIL_BY_ID = {
+    "1": "mark.james@example.com",
+    "2": "sarah.williams@example.com",
+    "3": "robert.brown@example.com",
+    "4": "john.doe@example.com",
+    "5": "jane.smith@example.com",
+    "6": "maria.santos@example.com",
+    "7": "jose.delacruz@example.com",
+    "8": "ana.reyes@example.com",
+    "9": "luis.garcia@example.com",
+    "10": "clara.mendoza@example.com"
+};
 
 let allRecords = [];
 let filteredRecords = [];
@@ -69,9 +106,65 @@ function setupFilters() {
 }
 
 function loadPatientRecords() {
+    seedDummyRecordsIfEmpty();
     const source = readFirstAvailableStorageArray();
     allRecords = source.map(normalizeRecord).filter(Boolean);
     applyFilters();
+}
+
+function seedDummyRecordsIfEmpty() {
+    const existing = readFirstAvailableStorageArray();
+    if (existing.length > 0) return;
+
+    const dummyRecords = [
+        {
+            id: 2001,
+            patient_id: 101,
+            patient: {
+                id: 101,
+                given_name: "Mark James",
+                blood_type: "B+",
+                user: { email: "mark.james@example.com", profile: { full_name: "Mark James" } }
+            },
+            appointment_date: "2026-03-05",
+            start_time: "09:00",
+            end_time: "09:30",
+            reason: "General Checkup",
+            status: "confirmed"
+        },
+        {
+            id: 2002,
+            patient_id: 102,
+            patient: {
+                id: 102,
+                given_name: "Sarah Williams",
+                blood_type: "A+",
+                user: { email: "sarah.williams@example.com", profile: { full_name: "Sarah Williams" } }
+            },
+            appointment_date: "2026-03-06",
+            start_time: "10:00",
+            end_time: "10:30",
+            reason: "Follow-up",
+            status: "pending"
+        },
+        {
+            id: 2003,
+            patient_id: 103,
+            patient: {
+                id: 103,
+                given_name: "Robert Brown",
+                blood_type: "O-",
+                user: { email: "robert.brown@example.com", profile: { full_name: "Robert Brown" } }
+            },
+            appointment_date: "2026-03-07",
+            start_time: "13:30",
+            end_time: "14:00",
+            reason: "Consultation",
+            status: "confirmed"
+        }
+    ];
+
+    localStorage.setItem(DEMO_STORAGE_KEY, JSON.stringify(dummyRecords));
 }
 
 function readFirstAvailableStorageArray() {
@@ -99,8 +192,18 @@ function normalizeRecord(item) {
         item.patient?.given_name ||
         item.patient?.user?.profile?.full_name ||
         item.patient?.user?.name ||
+        LEGACY_PATIENT_LABELS[item.patient?.user?.email] ||
+        LEGACY_PATIENT_LABELS[item.patient_email] ||
+        LEGACY_PATIENT_BY_ID[String(patientId)] ||
         item.patient?.name ||
         (patientId ? `Patient #${patientId}` : "N/A");
+    let patientEmail = item.patient_email || item.patient?.email || item.patient?.user?.email || "";
+    if (!patientEmail && LEGACY_EMAIL_BY_ID[String(patientId)]) {
+        patientEmail = LEGACY_EMAIL_BY_ID[String(patientId)];
+    }
+    if (!patientEmail && patientName && patientName !== "N/A" && !patientName.startsWith("Patient #")) {
+        patientEmail = toExampleEmail(patientName);
+    }
 
     const bloodType = item.blood_type || item.patient?.blood_type || item.patient_blood_type || "N/A";
     const appointmentDate = item.appointment_date || item.date || "";
@@ -110,6 +213,7 @@ function normalizeRecord(item) {
         raw: item,
         patientId: String(patientId || ""),
         patientName,
+        patientEmail,
         bloodType,
         appointmentDate,
         startTime
@@ -125,6 +229,7 @@ function applyFilters() {
         const matchSearch =
             !searchValue ||
             record.patientName.toLowerCase().includes(searchValue) ||
+            record.patientEmail.toLowerCase().includes(searchValue) ||
             record.patientId.toLowerCase().includes(searchValue);
 
         const matchDate = !appointmentDate || record.appointmentDate === appointmentDate;
@@ -164,7 +269,8 @@ function renderTable(records) {
             <tr>
                 <td>
                     <i class="bi bi-person-circle me-2 text-secondary"></i>
-                    ${escapeHtml(record.patientName)}
+                    <span>${escapeHtml(record.patientName)}</span>
+                    <div class="text-muted small">${escapeHtml(record.patientEmail || "no-email@example.com")}</div>
                 </td>
                 <td>
                     ${formatDateTime(record.appointmentDate, record.startTime)}
@@ -179,12 +285,16 @@ function renderTable(records) {
         )
         .join("");
 
-    tbody.querySelectorAll("button[data-patient-id]").forEach((button) => {
-        button.addEventListener("click", () => {
-            const id = button.getAttribute("data-patient-id") || "N/A";
-            alert(`Patient ID: ${id}`);
-        });
-    });
+	    tbody.querySelectorAll("button[data-patient-id]").forEach((button) => {
+	        button.addEventListener("click", () => {
+	            const id = button.getAttribute("data-patient-id") || "";
+	            const selected = records.find((record) => String(record.patientId) === String(id));
+	            if (selected) {
+	                localStorage.setItem("munticare_selected_patient_v1", JSON.stringify(selected));
+	            }
+	            window.location.href = `patientprofile.html?patient_id=${encodeURIComponent(id)}`;
+	        });
+	    });
 }
 
 function renderEmptyState(isEmpty, options) {
@@ -293,4 +403,13 @@ function escapeHtml(value) {
         .replace(/>/g, "&gt;")
         .replace(/\"/g, "&quot;")
         .replace(/'/g, "&#39;");
+}
+
+function toExampleEmail(fullName) {
+    const slug = String(fullName)
+        .trim()
+        .toLowerCase()
+        .replace(/[^a-z0-9\s]/g, "")
+        .replace(/\s+/g, ".");
+    return slug ? `${slug}@example.com` : "";
 }
