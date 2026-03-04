@@ -75,21 +75,319 @@ function getCurrentPatientContext() {
         const current = JSON.parse(raw);
         if (!current || current.role !== 'patient') return fallback;
         const matched = patientDirectory.find((p) => p.email === current.email);
-        return matched || fallback;
+        if (matched) return matched;
+        return {
+            id: Number(current.patient_id) || 999,
+            name: current.full_name || "Patient",
+            email: current.email
+        };
     } catch {
         return fallback;
     }
 }
 
 document.addEventListener('DOMContentLoaded', function() {
+    const onPatientDashboardPage = /\/patients\/dashboard\.html$/i.test(window.location.pathname);
+    if (onPatientDashboardPage) {
+        const current = getCurrentUser();
+        if (!current || current.role !== "patient") {
+            window.location.href = "../auth.html";
+            return;
+        }
+    }
+
+    hydratePatientProfileFromStorage();
+    clearDummySectionsForNewPatient();
+    hydrateClinicalSnapshotsFromStorage();
     const today = new Date().toISOString().split('T')[0];
     const appointmentDateInput = document.getElementById('appointmentDateInput');
+    const hiddenPatientIdInput = document.querySelector('#appointmentForm input[name="patient_id"]');
     if (appointmentDateInput) {
         appointmentDateInput.min = today;
     }
-    seedDemoAppointmentsIfEmpty();
+    if (hiddenPatientIdInput) {
+        hiddenPatientIdInput.value = String(patientIdDetails);
+    }
+    if (!isNewPatientAccount()) {
+        seedDemoAppointmentsIfEmpty();
+    }
     loadAppointments();
 });
+
+function hydrateClinicalSnapshotsFromStorage() {
+    const current = getCurrentUser();
+    if (!current || current.role !== "patient") return;
+
+    let store = {};
+    try {
+        store = JSON.parse(localStorage.getItem("munticare_patient_clinical_snapshots_v1") || "{}");
+    } catch {
+        store = {};
+    }
+
+    const emailKey = String(current.email || "").toLowerCase();
+    const idKey = current.patient_id ? `id:${current.patient_id}` : "";
+    const snapshot = store[emailKey] || (idKey ? store[idKey] : null);
+    if (!snapshot) return;
+
+    const summaryRecentBox = document.querySelector("#summary-pane .row.g-4 .col-md-6:first-child .info-box");
+    if (summaryRecentBox) {
+        const vaccinesHtml = sanitizeVaccineHtmlForPatient(snapshot.vaccineHtml || "");
+        const hasCards = vaccinesHtml.includes("list-group-item");
+        summaryRecentBox.innerHTML = hasCards
+            ? `<h6>Recent Vaccinations</h6>${extractFirstVaccineCard(vaccinesHtml)}`
+            : '<h6>Recent Vaccinations</h6><p class="text-muted mb-0 small">No vaccine records yet.</p>';
+    }
+
+    const vaccineList = document.querySelector("#vaccines-pane .list-group");
+    if (vaccineList && typeof snapshot.vaccineHtml === "string") {
+        const cleaned = sanitizeVaccineHtmlForPatient(snapshot.vaccineHtml || "");
+        vaccineList.innerHTML = cleaned || '<p class="text-muted mb-0">No vaccine records yet.</p>';
+    }
+
+    const historyPrescriptions = document.querySelector("#history-pane #collapsePrescriptions .accordion-body");
+    if (historyPrescriptions && typeof snapshot.prescriptionsHtml === "string") {
+        const cleaned = sanitizeHistorySectionHtml(snapshot.prescriptionsHtml || "", "No prescriptions available.");
+        historyPrescriptions.innerHTML = cleaned || '<p class="text-muted mb-0">No prescriptions available.</p>';
+    }
+
+    const historyDiagnosis = document.querySelector("#history-pane #collapseDiagnosis .accordion-body");
+    if (historyDiagnosis && typeof snapshot.diagnosisHtml === "string") {
+        const cleaned = sanitizeHistorySectionHtml(snapshot.diagnosisHtml || "", "No medical records available.");
+        historyDiagnosis.innerHTML = cleaned || '<p class="text-muted mb-0">No medical records available.</p>';
+    }
+
+    const historyFiles = document.querySelector("#history-pane #collapseFiles .accordion-body");
+    if (historyFiles && typeof snapshot.filesHtml === "string") {
+        const cleaned = sanitizeHistorySectionHtml(snapshot.filesHtml || "", "No attachments available.");
+        historyFiles.innerHTML = cleaned || '<p class="text-muted mb-0">No attachments available.</p>';
+    }
+
+    const historyAudit = document.querySelector("#history-pane #collapseAudit tbody");
+    if (historyAudit && typeof snapshot.auditHtml === "string") {
+        const cleaned = sanitizeAuditHtml(snapshot.auditHtml || "");
+        historyAudit.innerHTML = cleaned || '<tr><td colspan="3" class="text-center text-muted">No audit trails available.</td></tr>';
+    }
+}
+
+function sanitizeVaccineHtmlForPatient(html) {
+    const wrap = document.createElement("div");
+    wrap.innerHTML = html || "";
+
+    wrap.querySelectorAll(".delete-vaccine-btn, .btn-link.text-danger, .bi-trash").forEach((el) => {
+        const button = el.closest("button");
+        if (button) {
+            button.remove();
+        } else {
+            el.remove();
+        }
+    });
+
+    removeNoDataParagraphIfHasContent(wrap, "No vaccine records yet.");
+    return wrap.innerHTML.trim();
+}
+
+function sanitizeHistorySectionHtml(html, emptyText) {
+    const wrap = document.createElement("div");
+    wrap.innerHTML = html || "";
+    removeNoDataParagraphIfHasContent(wrap, emptyText);
+    return wrap.innerHTML.trim();
+}
+
+function sanitizeAuditHtml(html) {
+    const wrap = document.createElement("tbody");
+    wrap.innerHTML = html || "";
+
+    const rows = Array.from(wrap.querySelectorAll("tr"));
+    const hasRealRows = rows.some((row) => {
+        const onlyCell = row.querySelector("td[colspan='3']");
+        return !onlyCell;
+    });
+
+    if (hasRealRows) {
+        rows.forEach((row) => {
+            const onlyCell = row.querySelector("td[colspan='3']");
+            if (onlyCell && /No audit trails available\./i.test(onlyCell.textContent || "")) {
+                row.remove();
+            }
+        });
+    }
+
+    return wrap.innerHTML.trim();
+}
+
+function removeNoDataParagraphIfHasContent(container, text) {
+    const noData = Array.from(container.querySelectorAll("p.text-muted")).find(
+        (p) => (p.textContent || "").trim() === text
+    );
+    if (!noData) return;
+
+    const hasOther = Array.from(container.children).some((el) => el !== noData);
+    if (hasOther) noData.remove();
+}
+
+function extractFirstVaccineCard(vaccineHtml) {
+    const wrap = document.createElement("div");
+    wrap.innerHTML = vaccineHtml;
+    const first = wrap.querySelector(".list-group-item");
+    if (!first) {
+        return '<p class="text-muted mb-0 small">No vaccine records yet.</p>';
+    }
+    const title = first.querySelector(".fw-bold")?.textContent?.trim() || "Vaccine record";
+    const meta = first.querySelector("small.text-muted")?.textContent?.trim() || "";
+    return `
+        <div class="card mb-2 shadow-sm">
+            <div class="card-body p-2">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <div class="fw-semibold small">${title}</div>
+                        <small class="text-muted">${meta}</small>
+                    </div>
+                    <small class="text-success"><i class="bi bi-check-circle"></i></small>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+function isNewPatientAccount() {
+    const current = getCurrentUser();
+    if (!current || current.role !== "patient") return false;
+    if (current.is_new_patient === true) return true;
+    const email = String(current.email || "").toLowerCase();
+    return !patientDirectory.some((p) => p.email === email);
+}
+
+function clearDummySectionsForNewPatient() {
+    if (!isNewPatientAccount()) return;
+
+    const recentBox = document.querySelector("#summary-pane .row.g-4 .col-md-6:first-child .info-box");
+    if (recentBox) {
+        recentBox.innerHTML = `
+            <h6>Recent Vaccinations</h6>
+            <p class="text-muted mb-0 small">No vaccine records yet.</p>
+        `;
+    }
+
+    const vaccinesList = document.querySelector("#vaccines-pane .list-group");
+    if (vaccinesList) {
+        vaccinesList.innerHTML = '<p class="text-muted mb-0">No vaccine records yet.</p>';
+    }
+
+    const diagnosisBody = document.querySelector("#history-pane #collapseDiagnosis .accordion-body");
+    if (diagnosisBody) {
+        diagnosisBody.innerHTML = '<p class="text-muted mb-0">No medical records available.</p>';
+    }
+
+    const prescriptionsBody = document.querySelector("#history-pane #collapsePrescriptions .accordion-body");
+    if (prescriptionsBody) {
+        prescriptionsBody.innerHTML = '<p class="text-muted mb-0">No prescriptions available.</p>';
+    }
+
+    const filesBody = document.querySelector("#history-pane #collapseFiles .accordion-body");
+    if (filesBody) {
+        filesBody.innerHTML = '<p class="text-muted mb-0">No attachments available.</p>';
+    }
+
+    const auditBody = document.querySelector("#history-pane #collapseAudit tbody");
+    if (auditBody) {
+        auditBody.innerHTML = '<tr><td colspan="3" class="text-center text-muted">No audit trails available.</td></tr>';
+    }
+}
+
+function hydratePatientProfileFromStorage() {
+    const current = getCurrentUser();
+    if (!current || current.role !== "patient") return;
+
+    const email = String(current.email || "").toLowerCase();
+    if (!email) return;
+
+    const profiles = getPatientProfilesMap();
+    const profile = profiles[email];
+    if (!profile) return;
+
+    const name = profile.full_name || [profile.given_name, profile.surname].filter(Boolean).join(" ") || "Patient";
+    const age = calculateAge(profile.dob);
+    const bloodType = profile.blood_type || "N/A";
+    const allergies = profile.allergies || "N/A";
+    const chronic = profile.chronic_conditions || "N/A";
+    const height = profile.height ? `${profile.height} cm` : "N/A";
+    const weight = profile.weight ? `${profile.weight} kg` : "N/A";
+    const bmi = calculateBmi(profile.height, profile.weight);
+
+    const nameEl = document.querySelector(".patient-name");
+    const idEl = document.querySelector(".patient-id");
+    const ageEl = document.querySelector(".patient-age");
+    const photoEl = document.getElementById("patientProfileImg");
+
+    if (nameEl) nameEl.textContent = name;
+    if (idEl) idEl.textContent = `Patient ID: PAT-${String(patientIdDetails).padStart(3, "0")}`;
+    if (ageEl) ageEl.textContent = `Age: ${age !== null ? age : "N/A"}`;
+    if (photoEl && profile.photo_data_url) photoEl.src = profile.photo_data_url;
+
+    setText("patientDobText", formatDateReadable(profile.dob) || "N/A");
+    setText("patientGenderText", profile.sex || "N/A");
+    setText("patientBloodTypeText", bloodType);
+    setText("patientCivilStatusText", profile.civil_status || "N/A");
+
+    setText("medicalAllergiesValue", allergies);
+    setText("medicalChronicValue", chronic);
+    setText("medicalBloodTypeValue", bloodType);
+    setText("medicalHeightValue", height);
+    setText("medicalWeightValue", weight);
+    setText("medicalBmiValue", bmi !== null ? bmi.toFixed(1) : "N/A");
+}
+
+function getCurrentUser() {
+    try {
+        const raw = localStorage.getItem("munticare_current_user_v1");
+        return raw ? JSON.parse(raw) : null;
+    } catch {
+        return null;
+    }
+}
+
+function getPatientProfilesMap() {
+    try {
+        const raw = localStorage.getItem("munticare_patient_profiles_v1");
+        const parsed = raw ? JSON.parse(raw) : {};
+        return parsed && typeof parsed === "object" ? parsed : {};
+    } catch {
+        return {};
+    }
+}
+
+function setText(id, value) {
+    const el = document.getElementById(id);
+    if (el) el.textContent = value;
+}
+
+function calculateAge(dob) {
+    if (!dob) return null;
+    const birth = new Date(`${dob}T00:00:00`);
+    if (Number.isNaN(birth.getTime())) return null;
+    const today = new Date();
+    let age = today.getFullYear() - birth.getFullYear();
+    const m = today.getMonth() - birth.getMonth();
+    if (m < 0 || (m === 0 && today.getDate() < birth.getDate())) age -= 1;
+    return age >= 0 ? age : null;
+}
+
+function formatDateReadable(dob) {
+    if (!dob) return "";
+    const date = new Date(`${dob}T00:00:00`);
+    if (Number.isNaN(date.getTime())) return "";
+    return date.toLocaleDateString("en-US", { month: "short", day: "2-digit", year: "numeric" });
+}
+
+function calculateBmi(heightCm, weightKg) {
+    const h = Number(heightCm);
+    const w = Number(weightKg);
+    if (!h || !w) return null;
+    const hm = h / 100;
+    if (hm <= 0) return null;
+    return w / (hm * hm);
+}
 
 function seedDemoAppointmentsIfEmpty() {
     const current = getDemoAppointments();
@@ -193,7 +491,7 @@ function openFilePreview(fileUrl, fileName) {
 
 async function loadAppointments() {
     if (useDemoMode) {
-        const demoAppointments = getDemoAppointments();
+        const demoAppointments = getScopedDemoAppointments();
         await syncOverdueAppointments(demoAppointments);
         displayAppointments(demoAppointments);
         return;
@@ -214,9 +512,14 @@ async function loadAppointments() {
         })
         .catch(() => {
             useDemoMode = true;
-            const demoAppointments = getDemoAppointments();
+            const demoAppointments = getScopedDemoAppointments();
             syncOverdueAppointments(demoAppointments).then(() => displayAppointments(demoAppointments));
         });
+}
+
+function getScopedDemoAppointments() {
+    const all = getDemoAppointments();
+    return all.filter((apt) => String(apt.patient_id) === String(patientIdDetails));
 }
 
 function isOverdueAppointment(apt) {
@@ -533,6 +836,7 @@ document.getElementById('appointmentForm')?.addEventListener('submit', async fun
 
     const formData = new FormData(this);
     const data = Object.fromEntries(formData.entries());
+    data.patient_id = patientIdDetails;
     const validation = await validateAppointmentRules(data);
     if (!validation.ok) {
         errorBox.style.display = 'block';
@@ -548,7 +852,7 @@ document.getElementById('appointmentForm')?.addEventListener('submit', async fun
         const staffName = staffSelect?.options[staffSelect.selectedIndex]?.text || 'Staff TBA';
         const newItem = {
             id: Date.now(),
-            patient_id: Number(data.patient_id) || patientIdDetails,
+            patient_id: patientIdDetails,
             patient_name: patientContext.name,
             patient: {
                 id: patientIdDetails,
@@ -586,7 +890,7 @@ document.getElementById('appointmentForm')?.addEventListener('submit', async fun
     fetch('/api/appointments', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data)
+        body: JSON.stringify({ ...data, patient_id: patientIdDetails })
     })
         .then(response => {
             if (!response.ok) throw new Error(`HTTP ${response.status}`);

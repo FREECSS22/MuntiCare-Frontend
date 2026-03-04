@@ -39,7 +39,7 @@
             <!-- Left Column - Patient Info -->
             <div class="col-lg-3">
                 <div class="profile-card">
-                    <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300&h=300&fit=crop"
+                    <img id="patientProfileImg" src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300&h=300&fit=crop"
                         alt="Profile" class="profile-img">
                     <div class="patient-name">Mark James</div>
                     <div class="patient-id">Patient ID: PAT-001</div>
@@ -48,10 +48,10 @@
                     <div class="info-section">
                         <h6>General Information:</h6>
                         <ul class="list-unstyled mb-0">
-                            <li><strong>Date of Birth:</strong> Jan 01, 1999</li>
-                            <li><strong>Gender:</strong> Male</li>
-                            <li><strong>Blood Type:</strong> B+</li>
-                            <li><strong>Civil Status:</strong> Married</li>
+                            <li><strong>Date of Birth:</strong> <span id="patientDobText">Jan 01, 1999</span></li>
+                            <li><strong>Gender:</strong> <span id="patientGenderText">Male</span></li>
+                            <li><strong>Blood Type:</strong> <span id="patientBloodTypeText">B+</span></li>
+                            <li><strong>Civil Status:</strong> <span id="patientCivilStatusText">Married</span></li>
                         </ul>
                     </div>
                 </div>
@@ -90,27 +90,27 @@
                                         <tbody>
                                             <tr>
                                                 <td>Allergies:</td>
-                                                <td>N/A</td>
+                                                <td id="medicalAllergiesValue">N/A</td>
                                             </tr>
                                             <tr>
                                                 <td>Chronic Disease:</td>
-                                                <td>N/A</td>
+                                                <td id="medicalChronicValue">N/A</td>
                                             </tr>
                                             <tr>
                                                 <td>Blood Type:</td>
-                                                <td>B+</td>
+                                                <td id="medicalBloodTypeValue">B+</td>
                                             </tr>
                                             <tr>
                                                 <td>Height:</td>
-                                                <td>175.00 cm</td>
+                                                <td id="medicalHeightValue">175.00 cm</td>
                                             </tr>
                                             <tr>
                                                 <td>Weight:</td>
-                                                <td>60.00 kg</td>
+                                                <td id="medicalWeightValue">60.00 kg</td>
                                             </tr>
                                             <tr>
                                                 <td>BMI:</td>
-                                                <td>19.6</td>
+                                                <td id="medicalBmiValue">19.6</td>
                                             </tr>
                                         </tbody>
                                     </table>

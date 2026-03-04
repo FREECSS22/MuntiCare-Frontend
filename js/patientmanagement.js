@@ -106,87 +106,52 @@ function setupFilters() {
 }
 
 function loadPatientRecords() {
-    seedDummyRecordsIfEmpty();
-    const source = readFirstAvailableStorageArray();
-    allRecords = source.map(normalizeRecord).filter(Boolean);
+    const source = readFirstAvailableStorage();
+    const cleaned = removeLegacySeededDummyAppointments(source.list);
+    if (source.key && cleaned.length !== source.list.length) {
+        localStorage.setItem(source.key, JSON.stringify(cleaned));
+    }
+    allRecords = cleaned.map(normalizeRecord).filter(Boolean);
     applyFilters();
 }
 
-function seedDummyRecordsIfEmpty() {
-    const existing = readFirstAvailableStorageArray();
-    if (existing.length > 0) return;
-
-    const dummyRecords = [
-        {
-            id: 2001,
-            patient_id: 101,
-            patient: {
-                id: 101,
-                given_name: "Mark James",
-                blood_type: "B+",
-                user: { email: "mark.james@example.com", profile: { full_name: "Mark James" } }
-            },
-            appointment_date: "2026-03-05",
-            start_time: "09:00",
-            end_time: "09:30",
-            reason: "General Checkup",
-            status: "confirmed"
-        },
-        {
-            id: 2002,
-            patient_id: 102,
-            patient: {
-                id: 102,
-                given_name: "Sarah Williams",
-                blood_type: "A+",
-                user: { email: "sarah.williams@example.com", profile: { full_name: "Sarah Williams" } }
-            },
-            appointment_date: "2026-03-06",
-            start_time: "10:00",
-            end_time: "10:30",
-            reason: "Follow-up",
-            status: "pending"
-        },
-        {
-            id: 2003,
-            patient_id: 103,
-            patient: {
-                id: 103,
-                given_name: "Robert Brown",
-                blood_type: "O-",
-                user: { email: "robert.brown@example.com", profile: { full_name: "Robert Brown" } }
-            },
-            appointment_date: "2026-03-07",
-            start_time: "13:30",
-            end_time: "14:00",
-            reason: "Consultation",
-            status: "confirmed"
-        }
-    ];
-
-    localStorage.setItem(DEMO_STORAGE_KEY, JSON.stringify(dummyRecords));
+function removeLegacySeededDummyAppointments(list) {
+    const legacyIds = new Set([2001, 2002, 2003]);
+    const legacyPatientIds = new Set([101, 102, 103]);
+    return (Array.isArray(list) ? list : []).filter((item) => {
+        const id = Number(item?.id);
+        const patientId = Number(item?.patient_id ?? item?.patient?.id);
+        const isLegacySeed = legacyIds.has(id) && legacyPatientIds.has(patientId);
+        return !isLegacySeed;
+    });
 }
 
-function readFirstAvailableStorageArray() {
+function readFirstAvailableStorage() {
     for (const key of STORAGE_KEYS) {
         try {
             const raw = localStorage.getItem(key);
             if (!raw) continue;
             const parsed = JSON.parse(raw);
-            if (Array.isArray(parsed)) return parsed;
+            if (Array.isArray(parsed)) return { key, list: parsed };
         } catch {
             // Try next key
         }
     }
 
-    return [];
+    return { key: "", list: [] };
 }
 
 function normalizeRecord(item) {
     if (!item || typeof item !== "object") return null;
 
     const patientId = item.patient_id ?? item.patient?.id ?? item.patient?.user_id ?? item.patient?.user?.id ?? item.id ?? "";
+    const patientProfiles = readPatientProfiles();
+    const profileByEmail = findProfileByEmail(patientProfiles, item.patient_email || item.patient?.email || item.patient?.user?.email || "");
+    const profileById = findProfileByPatientId(patientProfiles, patientId);
+    const resolvedProfile = profileByEmail || profileById || null;
     const patientName =
+        resolvedProfile?.full_name ||
+        [resolvedProfile?.given_name, resolvedProfile?.surname].filter(Boolean).join(" ") ||
         item.patient_name ||
         item.patient?.full_name ||
         item.patient?.given_name ||
@@ -197,7 +162,7 @@ function normalizeRecord(item) {
         LEGACY_PATIENT_BY_ID[String(patientId)] ||
         item.patient?.name ||
         (patientId ? `Patient #${patientId}` : "N/A");
-    let patientEmail = item.patient_email || item.patient?.email || item.patient?.user?.email || "";
+    let patientEmail = resolvedProfile?.email || item.patient_email || item.patient?.email || item.patient?.user?.email || "";
     if (!patientEmail && LEGACY_EMAIL_BY_ID[String(patientId)]) {
         patientEmail = LEGACY_EMAIL_BY_ID[String(patientId)];
     }
@@ -205,7 +170,7 @@ function normalizeRecord(item) {
         patientEmail = toExampleEmail(patientName);
     }
 
-    const bloodType = item.blood_type || item.patient?.blood_type || item.patient_blood_type || "N/A";
+    const bloodType = resolvedProfile?.blood_type || item.blood_type || item.patient?.blood_type || item.patient_blood_type || "N/A";
     const appointmentDate = item.appointment_date || item.date || "";
     const startTime = item.start_time || item.time || "";
 
@@ -218,6 +183,28 @@ function normalizeRecord(item) {
         appointmentDate,
         startTime
     };
+}
+
+function readPatientProfiles() {
+    try {
+        const raw = localStorage.getItem("munticare_patient_profiles_v1");
+        const parsed = raw ? JSON.parse(raw) : {};
+        return parsed && typeof parsed === "object" ? parsed : {};
+    } catch {
+        return {};
+    }
+}
+
+function findProfileByEmail(profileMap, email) {
+    const key = String(email || "").trim().toLowerCase();
+    if (!key) return null;
+    return profileMap[key] || null;
+}
+
+function findProfileByPatientId(profileMap, patientId) {
+    const id = String(patientId || "");
+    if (!id) return null;
+    return Object.values(profileMap).find((profile) => String(profile?.patient_id || "") === id) || null;
 }
 
 function applyFilters() {

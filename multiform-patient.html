@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MuntiCare</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    
+    <!-- Google Fonts - Poppins -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="css/multiform-patient.css">
+</head>
+<body>
+    <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">
+                <img src="image/MuntiCare Logo.png" alt="Logo" style="height:40px; width:40px;">
+            </a>
+
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto"></ul>
+
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item dropdown">
+                        <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Account
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                            <a class="dropdown-item" href="auth.html">Logout</a>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container profile-card py-4">
+        <div class="text-center">
+            <div class="section-header">Complete your profile</div>
+            <div class="step-indicator">
+                <div id="stepCircle1" class="step-circle completed">1</div>
+                <div class="step-line"></div>
+                <div id="stepCircle2" class="step-circle pending">2</div>
+            </div>
+        </div>
+
+        <form id="patientProfileForm" action="#" method="post" enctype="multipart/form-data">
+            <!-- STEP 1 -->
+            <div class="form-step active" id="step1">
+                <div class="section-header">PERSONAL INFORMATION</div>
+                <div class="section-sub">Fill out the necessary details</div>
+                <div class="row g-4">
+                    <div class="col">
+                        <label class="form-label">Photo (2 MB max.) <span class="text-danger">*</span></label>
+                        <div class="photo-box">
+                            <img id="preview" src="image/default-avatar.png" alt="Photo Preview">
+                            <label for="photoInput" class="upload-label">Upload Photo</label>
+                            <input type="file" id="photoInput" name="profile_photo" class="upload-input" accept="image/jpeg,image/png,image/jpg" onchange="previewPhoto(event)" required>
+                            <small class="text-muted d-block mt-2">Max 2MB (JPG, PNG)</small>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="mb-3">
+                            <label class="form-label">Given Name</label>
+                            <input type="text" name="given_name" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Surname</label>
+                            <input type="text" name="surname" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Sex</label>
+                            <select name="sex" class="form-select" required>
+                                <option value="" disabled selected>Choose your sex at birth</option>
+                                <option value="Male">Male</option>
+                                <option value="Female">Female</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Civil Status</label>
+                            <select name="civil_status" class="form-select" required>
+                                <option value="" disabled selected>Choose your civil status</option>
+                                <option value="Single">Single</option>
+                                <option value="Married">Married</option>
+                                <option value="Widowed">Widowed</option>
+                                <option value="Separated">Separated</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="col-md-5">
+                        <div class="mb-3">
+                            <label class="form-label d-flex align-items-center">
+                                Middle Name
+                                <div class="form-check ms-2 small">
+                                    <input type="checkbox" class="form-check-input" id="noMiddle" onclick="toggleMiddle()">
+                                    <label class="form-check-label" for="noMiddle">Not applicable</label>
+                                </div>
+                            </label>
+                            <input type="text" name="middle_name" class="form-control">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Date of Birth</label>
+                            <input type="date" name="dob" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Contact Number</label>
+                            <input type="text" name="contact" class="form-control" required>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-end mt-4">
+                    <button type="button" id="btnStep1" class="btn btn-save" disabled onclick="goToStep(2)">
+                        Save & Continue <i class="bi bi-caret-right-fill"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- STEP 2 -->
+            <div class="form-step" id="step2">
+                <div class="section-header">MEDICAL INFORMATION</div>
+                <div class="section-sub">Fill out the necessary details</div>
+
+                <div class="d-flex justify-content-center">
+                    <div class="row g-4 step-two-grid">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Blood Type <span class="text-danger">*</span></label>
+                                <select name="blood_type" class="form-select" required>
+                                    <option value="" disabled selected>Choose your blood type</option>
+                                    <option value="A+">A+</option>
+                                    <option value="A-">A-</option>
+                                    <option value="B+">B+</option>
+                                    <option value="B-">B-</option>
+                                    <option value="AB+">AB+</option>
+                                    <option value="AB-">AB-</option>
+                                    <option value="O+">O+</option>
+                                    <option value="O-">O-</option>
+                                </select>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Height (cm) <span class="text-danger">*</span></label>
+                                <input type="number" name="height" class="form-control" placeholder="Your height" required>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Weight (kg) <span class="text-danger">*</span></label>
+                                <input type="number" name="weight" class="form-control" placeholder="Your weight" required>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Allergies</label>
+                                <input type="text" name="allergies" class="form-control" placeholder="Add allergies">
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Chronic Conditions</label>
+                                <input type="text" name="chronic_conditions" class="form-control" placeholder="Add chronic conditions">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-between mt-4">
+                    <button type="button" class="btn-back" onclick="goToStep(1)"><i class="bi bi-caret-left-fill"></i> Previous</button>
+                    <button type="submit" class="btn btn-save" id="btnStep2" disabled>
+                        Save & Continue <i class="bi bi-caret-right-fill"></i>
+                    </button>
+                </div>
+            </div>
+        </form>
+
+        <div id="formResponse" class="mt-3"></div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function previewPhoto(evt) {
+            const file = evt.target.files[0];
+            const preview = document.getElementById("preview");
+            if (!file || !preview) return;
+
+            if (file.size > 2 * 1024 * 1024) {
+                alert("File size must be less than 2MB");
+                evt.target.value = "";
+                preview.src = "image/default-avatar.png";
+                return;
+            }
+
+            const validTypes = ["image/jpeg", "image/png", "image/jpg"];
+            if (!validTypes.includes(file.type)) {
+                alert("Please upload a JPG or PNG image");
+                evt.target.value = "";
+                preview.src = "image/default-avatar.png";
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                preview.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function toggleMiddle() {
+            const input = document.querySelector('input[name="middle_name"]');
+            const checkbox = document.getElementById("noMiddle");
+            if (!input || !checkbox) return;
+            input.disabled = checkbox.checked;
+            if (checkbox.checked) input.value = "";
+        }
+
+        function goToStep(stepNumber) {
+            document.querySelectorAll(".form-step").forEach((step) => step.classList.remove("active"));
+            const target = document.getElementById(`step${stepNumber}`);
+            if (target) target.classList.add("active");
+
+            for (let i = 1; i <= 2; i++) {
+                const circle = document.getElementById(`stepCircle${i}`);
+                if (!circle) continue;
+                circle.className = i <= stepNumber ? "step-circle completed" : "step-circle pending";
+            }
+        }
+
+        function initStep1Validation() {
+            const step1 = document.getElementById("step1");
+            const btnStep1 = document.getElementById("btnStep1");
+            if (!step1 || !btnStep1) return;
+
+            const requiredFields = step1.querySelectorAll("input[required], select[required]");
+            const checkStep1Validity = () => {
+                let allFilled = true;
+                requiredFields.forEach((field) => {
+                    if (!field.value || field.value.trim() === "") allFilled = false;
+                });
+                btnStep1.disabled = !allFilled;
+            };
+
+            requiredFields.forEach((field) => {
+                field.addEventListener("input", checkStep1Validity);
+                field.addEventListener("change", checkStep1Validity);
+            });
+            checkStep1Validity();
+        }
+
+        function initStep2Validation() {
+            const step2 = document.getElementById("step2");
+            const btnStep2 = document.getElementById("btnStep2");
+            if (!step2 || !btnStep2) return;
+
+            const requiredFields = step2.querySelectorAll('select[name="blood_type"], input[name="height"], input[name="weight"]');
+            const checkStep2Validity = () => {
+                let allFilled = true;
+                requiredFields.forEach((field) => {
+                    if (!field.value || field.value.trim() === "") allFilled = false;
+                });
+                btnStep2.disabled = !allFilled;
+            };
+
+            requiredFields.forEach((field) => {
+                field.addEventListener("input", checkStep2Validity);
+                field.addEventListener("change", checkStep2Validity);
+            });
+            checkStep2Validity();
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            goToStep(1);
+            initStep1Validation();
+            initStep2Validation();
+        });
+    </script>
+    <script src="js/multiform-patient.js"></script>
+</body>
+</html>

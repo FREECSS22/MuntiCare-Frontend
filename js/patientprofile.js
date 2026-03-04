@@ -3,6 +3,7 @@ document.addEventListener("DOMContentLoaded", () => {
     hydrateSelectedPatient();
     setupVaccineTabActions();
     setupHistoryTabActions();
+    restoreClinicalSnapshots();
     setupSummaryAppointmentCard();
     setTimeout(() => {
         renderSummaryRecentVaccine();
@@ -58,6 +59,7 @@ const APPOINTMENT_STORAGE_KEYS = [
 ];
 
 let selectedPatientIdForProfile = "1";
+let selectedPatientEmailForProfile = "";
 
 function setupSidebar() {
     const menuToggle = document.getElementById("menuToggle");
@@ -101,6 +103,7 @@ function hydrateSelectedPatient() {
     const idEl = document.querySelector(".patient-id");
     const hiddenPatientId = document.querySelector('input[name="patient_id"]');
 
+    const selectedEmail = selected?.patientEmail || selected?.raw?.patient_email || selected?.raw?.patient?.user?.email || "";
     const resolvedId = patientId || selected?.patientId || selected?.raw?.patient_id || "1";
     const resolvedName =
         selected?.patientName ||
@@ -113,6 +116,168 @@ function hydrateSelectedPatient() {
     if (idEl) idEl.textContent = `Patient ID: PAT-${String(resolvedId).padStart(3, "0")}`;
     if (hiddenPatientId) hiddenPatientId.value = resolvedId;
     selectedPatientIdForProfile = String(resolvedId);
+    selectedPatientEmailForProfile = String(selectedEmail || "").toLowerCase();
+
+    hydrateSelectedPatientProfile(resolvedId, selected);
+}
+
+function hydrateSelectedPatientProfile(resolvedId, selected) {
+    const profiles = readPatientProfiles();
+    const selectedEmail = selected?.patientEmail || selected?.raw?.patient_email || selected?.raw?.patient?.user?.email || "";
+
+    const byEmail = selectedEmail ? profiles[String(selectedEmail).toLowerCase()] : null;
+    const byId = Object.values(profiles).find((profile) => String(profile?.patient_id || "") === String(resolvedId));
+    const profile = byEmail || byId || null;
+    if (!profile) return;
+    selectedPatientEmailForProfile = String(profile.email || selectedPatientEmailForProfile || "").toLowerCase();
+
+    const photoEl = document.getElementById("profilePatientImg");
+    if (photoEl && profile.photo_data_url) photoEl.src = profile.photo_data_url;
+
+    const ageEl = document.getElementById("profilePatientAge");
+    const dobText = formatDate(profile.dob);
+    const age = calculateAge(profile.dob);
+    if (ageEl) ageEl.textContent = `Age: ${age !== null ? age : "N/A"}`;
+
+    setText("profilePatientDob", dobText || "N/A");
+    setText("profilePatientGender", profile.sex || "N/A");
+    setText("profilePatientBloodType", profile.blood_type || "N/A");
+    setText("profilePatientCivilStatus", profile.civil_status || "N/A");
+
+    setText("profileAllergiesValue", profile.allergies || "N/A");
+    setText("profileChronicValue", profile.chronic_conditions || "N/A");
+    setText("profileBloodTypeValue", profile.blood_type || "N/A");
+    setText("profileHeightValue", profile.height ? `${profile.height} cm` : "N/A");
+    setText("profileWeightValue", profile.weight ? `${profile.weight} kg` : "N/A");
+
+    const bmi = calculateBmi(profile.height, profile.weight);
+    setText("profileBmiValue", bmi !== null ? bmi.toFixed(1) : "N/A");
+
+    if (profile.is_new_patient) {
+        clearDummyClinicalSections();
+    }
+}
+
+function readPatientProfiles() {
+    try {
+        const raw = localStorage.getItem("munticare_patient_profiles_v1");
+        const parsed = raw ? JSON.parse(raw) : {};
+        return parsed && typeof parsed === "object" ? parsed : {};
+    } catch {
+        return {};
+    }
+}
+
+function setText(id, value) {
+    const el = document.getElementById(id);
+    if (el) el.textContent = value;
+}
+
+function formatDate(dob) {
+    if (!dob) return "";
+    const date = new Date(`${dob}T00:00:00`);
+    if (Number.isNaN(date.getTime())) return "";
+    return date.toLocaleDateString("en-US", { month: "short", day: "2-digit", year: "numeric" });
+}
+
+function calculateAge(dob) {
+    if (!dob) return null;
+    const birth = new Date(`${dob}T00:00:00`);
+    if (Number.isNaN(birth.getTime())) return null;
+    const today = new Date();
+    let age = today.getFullYear() - birth.getFullYear();
+    const m = today.getMonth() - birth.getMonth();
+    if (m < 0 || (m === 0 && today.getDate() < birth.getDate())) age -= 1;
+    return age >= 0 ? age : null;
+}
+
+function calculateBmi(heightCm, weightKg) {
+    const h = Number(heightCm);
+    const w = Number(weightKg);
+    if (!h || !w) return null;
+    const hm = h / 100;
+    if (hm <= 0) return null;
+    return w / (hm * hm);
+}
+
+function clearDummyClinicalSections() {
+    const vaccineList = document.getElementById("vaccineRecordsList");
+    if (vaccineList) {
+        vaccineList.innerHTML = '<p class="text-muted mb-0">No vaccine records yet.</p>';
+    }
+
+    const diagnosisList = document.getElementById("diagnosisList");
+    if (diagnosisList) {
+        diagnosisList.innerHTML = '<p class="text-muted mb-0">No medical records available.</p>';
+    }
+
+    const prescriptionsList = document.getElementById("prescriptionsList");
+    if (prescriptionsList) {
+        prescriptionsList.innerHTML = '<p class="text-muted mb-0">No prescriptions available.</p>';
+    }
+
+    const historyFileList = document.getElementById("historyFileList");
+    if (historyFileList) {
+        historyFileList.innerHTML = '<p class="text-muted mb-0">No attachments available.</p>';
+    }
+
+    const auditTrailList = document.getElementById("auditTrailList");
+    if (auditTrailList) {
+        auditTrailList.innerHTML = '<tr><td colspan="3" class="text-center text-muted">No audit trails available.</td></tr>';
+    }
+
+    persistClinicalSnapshots();
+}
+
+function getClinicalSnapshotKey() {
+    if (selectedPatientEmailForProfile) return selectedPatientEmailForProfile;
+    return `id:${selectedPatientIdForProfile}`;
+}
+
+function readClinicalSnapshotsStore() {
+    try {
+        const raw = localStorage.getItem("munticare_patient_clinical_snapshots_v1");
+        const parsed = raw ? JSON.parse(raw) : {};
+        return parsed && typeof parsed === "object" ? parsed : {};
+    } catch {
+        return {};
+    }
+}
+
+function persistClinicalSnapshots() {
+    const key = getClinicalSnapshotKey();
+    if (!key) return;
+
+    const store = readClinicalSnapshotsStore();
+    store[key] = {
+        vaccineHtml: document.getElementById("vaccineRecordsList")?.innerHTML || "",
+        diagnosisHtml: document.getElementById("diagnosisList")?.innerHTML || "",
+        prescriptionsHtml: document.getElementById("prescriptionsList")?.innerHTML || "",
+        filesHtml: document.getElementById("historyFileList")?.innerHTML || "",
+        auditHtml: document.getElementById("auditTrailList")?.innerHTML || "",
+        updated_at: new Date().toISOString()
+    };
+    localStorage.setItem("munticare_patient_clinical_snapshots_v1", JSON.stringify(store));
+}
+
+function restoreClinicalSnapshots() {
+    const key = getClinicalSnapshotKey();
+    if (!key) return;
+    const store = readClinicalSnapshotsStore();
+    const snapshot = store[key];
+    if (!snapshot) return;
+
+    const vaccineList = document.getElementById("vaccineRecordsList");
+    const diagnosisList = document.getElementById("diagnosisList");
+    const prescriptionsList = document.getElementById("prescriptionsList");
+    const historyFileList = document.getElementById("historyFileList");
+    const auditTrailList = document.getElementById("auditTrailList");
+
+    if (vaccineList && typeof snapshot.vaccineHtml === "string") vaccineList.innerHTML = snapshot.vaccineHtml;
+    if (diagnosisList && typeof snapshot.diagnosisHtml === "string") diagnosisList.innerHTML = snapshot.diagnosisHtml;
+    if (prescriptionsList && typeof snapshot.prescriptionsHtml === "string") prescriptionsList.innerHTML = snapshot.prescriptionsHtml;
+    if (historyFileList && typeof snapshot.filesHtml === "string") historyFileList.innerHTML = snapshot.filesHtml;
+    if (auditTrailList && typeof snapshot.auditHtml === "string") auditTrailList.innerHTML = snapshot.auditHtml;
 }
 
 function setupVaccineTabActions() {
@@ -176,6 +341,7 @@ function setupVaccineTabActions() {
                 if (!list.children.length) {
                     list.innerHTML = '<p class="text-muted mb-0">No vaccine records yet.</p>';
                 }
+                persistClinicalSnapshots();
                 renderSummaryRecentVaccine();
             });
     });
@@ -231,6 +397,7 @@ function setupVaccineTabActions() {
         }
 
         showToast("Vaccine record added successfully.", "success");
+        persistClinicalSnapshots();
         renderSummaryRecentVaccine();
     });
 }
@@ -281,6 +448,10 @@ function setupHistoryTabActions() {
                 return;
             }
 
+            if (diagnosisList.querySelector("p.text-muted")) {
+                diagnosisList.innerHTML = "";
+            }
+
             diagnosisList.insertAdjacentHTML(
                 "afterbegin",
                 `
@@ -297,6 +468,7 @@ function setupHistoryTabActions() {
             bootstrap.Modal.getInstance(document.getElementById("addDiagnosisModal"))?.hide();
             diagnosisForm.reset();
             showToast("Diagnosis record added.", "success");
+            persistClinicalSnapshots();
         });
     }
 
@@ -312,6 +484,10 @@ function setupHistoryTabActions() {
             if (!medicine || !dosage) {
                 showToast("Please complete required fields.", "error");
                 return;
+            }
+
+            if (prescriptionsList.querySelector("p.text-muted")) {
+                prescriptionsList.innerHTML = "";
             }
 
             const suffix = duration ? ` | ${duration}` : "";
@@ -330,6 +506,7 @@ function setupHistoryTabActions() {
             bootstrap.Modal.getInstance(document.getElementById("addPrescriptionModal"))?.hide();
             prescriptionForm.reset();
             showToast("Prescription added.", "success");
+            persistClinicalSnapshots();
         });
     }
 
@@ -341,6 +518,10 @@ function setupHistoryTabActions() {
             if (!(file instanceof File) || !file.name) {
                 showToast("Please choose a file.", "error");
                 return;
+            }
+
+            if (fileList.querySelector("p.text-muted")) {
+                fileList.innerHTML = "";
             }
 
             const description = String(data.get("description") || "").trim();
@@ -384,6 +565,7 @@ function setupHistoryTabActions() {
             bootstrap.Modal.getInstance(document.getElementById("uploadFileModal"))?.hide();
             uploadFileForm.reset();
             showToast("File uploaded successfully.", "success");
+            persistClinicalSnapshots();
         });
     }
 }
@@ -391,6 +573,11 @@ function setupHistoryTabActions() {
 function appendAuditTrail(action) {
     const body = document.getElementById("auditTrailList");
     if (!body) return;
+
+    const emptyRow = body.querySelector("tr td[colspan='3']");
+    if (emptyRow) {
+        body.innerHTML = "";
+    }
 
     const now = new Date();
     const stamp = now.toLocaleDateString("en-GB") + " " + now.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" });
@@ -404,17 +591,35 @@ function appendAuditTrail(action) {
         </tr>
     `
     );
+    persistClinicalSnapshots();
 }
 
 function getCurrentStaffDisplayName() {
     const display = document.getElementById("administeredByDisplay");
-    if (display?.value?.trim()) return display.value.trim();
+    const displayValue = display?.value?.trim() || "";
+    if (displayValue && !/^healthcare staff$/i.test(displayValue)) return displayValue;
+
+    try {
+        const rawSelected = localStorage.getItem("munticare_selected_patient_v1");
+        const selected = rawSelected ? JSON.parse(rawSelected) : null;
+        const selectedStaffId = String(selected?.raw?.staff_id || selected?.staff_id || "").trim();
+        if (selectedStaffId && STAFF_NAME_BY_ID[selectedStaffId]) {
+            return STAFF_NAME_BY_ID[selectedStaffId];
+        }
+    } catch {
+        // ignored
+    }
+
+    const assigned = getLatestAssignedDoctorForPatient(selectedPatientIdForProfile);
+    if (assigned?.name) return assigned.name;
 
     try {
         const raw = localStorage.getItem("munticare_current_user_v1");
         const current = raw ? JSON.parse(raw) : null;
-        const matched = current?.email ? HEALTHCARE_STAFF_BY_EMAIL[current.email] : null;
-        if (matched) return matched.name;
+        const normalizedEmail = String(current?.email || "").trim().toLowerCase();
+        const matched = normalizedEmail ? HEALTHCARE_STAFF_BY_EMAIL[normalizedEmail] : null;
+        if (matched?.name) return matched.name;
+        if (current?.name) return current.name;
         if (current?.full_name) return current.full_name;
         if (current?.email) return current.email;
     } catch {
@@ -663,10 +868,14 @@ function hydrateAdministeredBy() {
     try {
         const raw = localStorage.getItem("munticare_current_user_v1");
         const current = raw ? JSON.parse(raw) : null;
-        const matched = current?.email ? HEALTHCARE_STAFF_BY_EMAIL[current.email] : null;
+        const normalizedEmail = String(current?.email || "").trim().toLowerCase();
+        const matched = normalizedEmail ? HEALTHCARE_STAFF_BY_EMAIL[normalizedEmail] : null;
         if (matched) {
             value = `${matched.name}${matched.specialization ? ` - ${matched.specialization}` : ""}`;
             staffId = matched.id || "";
+        } else if (current?.name) {
+            value = `${current.name}${current.specialization ? ` - ${current.specialization}` : ""}`;
+            staffId = current.staff_id || "";
         } else if (current?.full_name) {
             value = `${current.full_name}${current.specialization ? ` - ${current.specialization}` : ""}`;
             staffId = current.staff_id || "";
@@ -683,8 +892,51 @@ function hydrateAdministeredBy() {
         }
     }
 
+    // Fallback: use latest assigned doctor from patient's appointments.
+    if (value === "Healthcare Staff") {
+        const mappedBySelectedStaffId =
+            STAFF_NAME_BY_ID[String(selected?.raw?.staff_id || selected?.staff_id || "")] || "";
+        if (mappedBySelectedStaffId) {
+            value = mappedBySelectedStaffId;
+            staffId = String(selected?.raw?.staff_id || selected?.staff_id || staffId || "");
+        }
+    }
+
+    // Fallback: use latest assigned doctor from patient's appointments.
+    if (value === "Healthcare Staff") {
+        const assigned = getLatestAssignedDoctorForPatient(selectedPatientIdForProfile);
+        if (assigned?.name) {
+            value = assigned.name;
+            if (assigned.id) staffId = String(assigned.id);
+        }
+    }
+
     display.value = value;
     if (hidden) hidden.value = staffId;
+}
+
+function getLatestAssignedDoctorForPatient(patientId) {
+    const appts = getPatientAppointments(patientId);
+    if (!appts.length) return null;
+
+    const latest = [...appts].sort((a, b) => {
+        const aId = Number(a.id || 0);
+        const bId = Number(b.id || 0);
+        if (aId !== bId) return bId - aId;
+        const aDate = new Date(`${a.appointment_date || ""}T${a.start_time || "00:00"}`).getTime();
+        const bDate = new Date(`${b.appointment_date || ""}T${b.start_time || "00:00"}`).getTime();
+        return (Number.isFinite(bDate) ? bDate : 0) - (Number.isFinite(aDate) ? aDate : 0);
+    })[0];
+
+    const id = String(latest?.staff_id || "");
+    const name =
+        STAFF_NAME_BY_ID[id] ||
+        latest?.staff?.user?.profile?.full_name ||
+        latest?.staff_name ||
+        "";
+
+    if (!name) return null;
+    return { id, name };
 }
 
 async function fetchVaccineBatches(vaccineName) {
