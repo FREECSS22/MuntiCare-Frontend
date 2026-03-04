@@ -1,6 +1,7 @@
 document.addEventListener("DOMContentLoaded", function () {
     const STORAGE_USERS_KEY = "munticare_users_v1";
     const STORAGE_PROFILE_STATUS_KEY = "munticare_patient_profile_status_v1";
+    const STORAGE_STAFF_PROFILE_STATUS_KEY = "munticare_staff_profile_status_v1";
 
     const healthcareProfileByEmail = {
         "aiah@munticare.com": { staff_id: "1", full_name: "Dr. Maraiah Queen Arceta", specialization: "Pediatrics" },
@@ -93,6 +94,20 @@ document.addEventListener("DOMContentLoaded", function () {
         localStorage.setItem(STORAGE_PROFILE_STATUS_KEY, JSON.stringify(map));
     }
 
+    function getStaffProfileStatusMap() {
+        try {
+            const raw = localStorage.getItem(STORAGE_STAFF_PROFILE_STATUS_KEY);
+            const parsed = raw ? JSON.parse(raw) : {};
+            return parsed && typeof parsed === "object" ? parsed : {};
+        } catch {
+            return {};
+        }
+    }
+
+    function saveStaffProfileStatusMap(map) {
+        localStorage.setItem(STORAGE_STAFF_PROFILE_STATUS_KEY, JSON.stringify(map));
+    }
+
     function seedDefaultPatientProfileStatus(users) {
         const map = getProfileStatusMap();
         let changed = false;
@@ -111,8 +126,33 @@ document.addEventListener("DOMContentLoaded", function () {
         if (changed) saveProfileStatusMap(map);
     }
 
+    function seedDefaultHealthcareProfileStatus(users) {
+        const map = getStaffProfileStatusMap();
+        let changed = false;
+        users.forEach((user) => {
+            if (String(user.role || "").toLowerCase() !== "healthcare") return;
+            const key = normalizeEmail(user.email);
+            // Only seed built-in healthcare accounts as completed.
+            if (!healthcareProfileByEmail[key]) return;
+            if (!map[key]) {
+                map[key] = {
+                    completed: true,
+                    seeded: true,
+                    updated_at: new Date().toISOString()
+                };
+                changed = true;
+            }
+        });
+        if (changed) saveStaffProfileStatusMap(map);
+    }
+
     function isPatientProfileComplete(email) {
         const map = getProfileStatusMap();
+        return Boolean(map[normalizeEmail(email)]?.completed);
+    }
+
+    function isStaffProfileComplete(email) {
+        const map = getStaffProfileStatusMap();
         return Boolean(map[normalizeEmail(email)]?.completed);
     }
 
@@ -128,6 +168,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     seedDefaultPatientProfileStatus(getUsers());
+    seedDefaultHealthcareProfileStatus(getUsers());
 
     function toggleAuthPanel() {
         if (isAnimating) return;
@@ -192,13 +233,20 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         const staffProfile = healthcareProfileByEmail[user.email] || null;
-        const needsProfile = user.role === "patient" && !isPatientProfileComplete(user.email);
-        const redirectRoute = needsProfile ? "multiform-patient.html" : user.route;
+        const needsPatientProfile = user.role === "patient" && !isPatientProfileComplete(user.email);
+        const needsStaffProfile = user.role === "healthcare" && !isStaffProfileComplete(user.email);
+        const redirectRoute = needsPatientProfile
+            ? "multiform-patient.html"
+            : needsStaffProfile
+                ? "multiform-healthcare.html"
+                : user.route;
 
         Swal.fire({
             icon: "success",
             title: "Login Successful",
-            text: needsProfile ? "Please complete your profile first." : `Welcome ${user.role}!`,
+            text: (needsPatientProfile || needsStaffProfile)
+                ? "Please complete your profile first."
+                : `Welcome ${user.role}!`,
             timer: 2000,
             showConfirmButton: false
         }).then(() => {
@@ -211,7 +259,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     staff_id: staffProfile?.staff_id || "",
                     full_name: staffProfile?.full_name || "",
                     specialization: staffProfile?.specialization || "",
-                    profile_completed: !needsProfile,
+                    profile_completed: !(needsPatientProfile || needsStaffProfile),
                     patient_id: user.patient_id || "",
                     is_new_patient: Boolean(user.is_new_patient)
                 })

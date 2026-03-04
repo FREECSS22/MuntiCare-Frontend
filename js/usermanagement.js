@@ -15,6 +15,10 @@ const PAGE_SIZE = 5;
 let currentPage = 1;
 let filteredUsers = [...users];
 let modalInstance;
+const AUTH_USERS_KEY = "munticare_users_v1";
+const STAFF_STATUS_KEY = "munticare_staff_profile_status_v1";
+const DEFAULT_DOCTOR_ROUTE = "healthcare/appointments.html";
+const DEFAULT_ADMIN_ROUTE = "admin/overview.html";
 
 function render() {
     const tbody = document.getElementById('tableBody');
@@ -104,8 +108,9 @@ function saveUser() {
     if (pw.length < 6) { showErr('Password must be at least 6 characters.'); return; }
     if (users.find(u => u.email.toLowerCase() === email)) { showErr('Email already exists.'); return; }
     const now = new Date();
-    users.push({ id: nextId++, name, role, email, is_enabled: false,
+    users.push({ id: nextId++, name, role, email, is_enabled: true,
     created_at: now.toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' }) });
+    upsertAuthUserFromAdminCreate({ name, email, password: pw, role });
     modalInstance.hide();
     showToast(`${name} added successfully!`);
     applyFilters();
@@ -126,6 +131,112 @@ function showToast(msg, type = 'ok') {
     setTimeout(() => t.remove(), 3000);
 }
 
+function readAuthUsers() {
+    try {
+        const raw = localStorage.getItem(AUTH_USERS_KEY);
+        const parsed = raw ? JSON.parse(raw) : [];
+        return Array.isArray(parsed) ? parsed : [];
+    } catch {
+        return [];
+    }
+}
+
+function saveAuthUsers(list) {
+    localStorage.setItem(AUTH_USERS_KEY, JSON.stringify(list));
+}
+
+function formatDateForUi(dateLike) {
+    const date = dateLike ? new Date(dateLike) : new Date();
+    if (Number.isNaN(date.getTime())) return "";
+    return date.toLocaleDateString("en-US", { month: "short", day: "2-digit", year: "numeric" });
+}
+
+function humanizeEmailName(email) {
+    const local = String(email || "").split("@")[0] || "";
+    if (!local) return "User";
+    return local.replace(/[._-]+/g, " ").replace(/\b\w/g, (ch) => ch.toUpperCase());
+}
+
+function uiRoleFromAuthRole(role) {
+    const normalized = String(role || "").toLowerCase();
+    if (normalized === "healthcare") return "Doctor";
+    if (normalized === "admin") return "Admin";
+    return "";
+}
+
+function authRoleFromUiRole(role) {
+    return String(role || "").toLowerCase() === "admin" ? "admin" : "healthcare";
+}
+
+function ensureHealthcareProfileIncomplete(email) {
+    const key = String(email || "").trim().toLowerCase();
+    if (!key) return;
+    let map = {};
+    try {
+        map = JSON.parse(localStorage.getItem(STAFF_STATUS_KEY) || "{}");
+    } catch {
+        map = {};
+    }
+    map[key] = {
+        ...(map[key] || {}),
+        completed: false,
+        updated_at: new Date().toISOString()
+    };
+    localStorage.setItem(STAFF_STATUS_KEY, JSON.stringify(map));
+}
+
+function upsertAuthUserFromAdminCreate({ name, email, password, role }) {
+    const authRole = authRoleFromUiRole(role);
+    const authUsers = readAuthUsers();
+    const idx = authUsers.findIndex((u) => String(u?.email || "").trim().toLowerCase() === email);
+    const payload = {
+        email,
+        password,
+        role: authRole,
+        route: authRole === "admin" ? DEFAULT_ADMIN_ROUTE : DEFAULT_DOCTOR_ROUTE,
+        full_name: name,
+        profile_completed: authRole === "admin"
+    };
+
+    if (idx >= 0) {
+        authUsers[idx] = { ...authUsers[idx], ...payload };
+    } else {
+        authUsers.push(payload);
+    }
+    saveAuthUsers(authUsers);
+
+    if (authRole === "healthcare") {
+        ensureHealthcareProfileIncomplete(email);
+    }
+}
+
+function hydrateUsersFromAuthStore() {
+    const authUsers = readAuthUsers();
+    const existingEmails = new Set(users.map((u) => String(u.email || "").toLowerCase()));
+    let maxUiId = users.reduce((max, user) => Math.max(max, Number(user.id) || 0), 0);
+
+    authUsers.forEach((u) => {
+        const uiRole = uiRoleFromAuthRole(u.role);
+        if (!uiRole) return;
+        const email = String(u.email || "").trim().toLowerCase();
+        if (!email || existingEmails.has(email)) return;
+
+        const maybeStaffId = Number(u.staff_id);
+        const id = Number.isFinite(maybeStaffId) && maybeStaffId > 0 ? maybeStaffId : ++maxUiId;
+        users.push({
+            id,
+            name: String(u.full_name || u.name || humanizeEmailName(email)),
+            role: uiRole,
+            email,
+            is_enabled: u.is_enabled !== false,
+            created_at: formatDateForUi(u.created_at)
+        });
+        existingEmails.add(email);
+    });
+
+    nextId = Math.max(nextId, users.reduce((max, user) => Math.max(max, Number(user.id) || 0), 0) + 1);
+}
+
 const menuToggle     = document.getElementById('menuToggle');
 const sidebar        = document.getElementById('sidebar');
 const sidebarOverlay = document.getElementById('sidebarOverlay');
@@ -138,4 +249,5 @@ sidebarOverlay.addEventListener('click', () => {
     sidebarOverlay.classList.remove('show');
 });
 
+hydrateUsersFromAuthStore();
 applyFilters();
