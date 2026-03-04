@@ -64,12 +64,19 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function getNextPatientId(users) {
-        const patientIds = users
+        const usedIds = new Set(
+            users
             .filter((u) => u.role === "patient")
             .map((u) => Number(u.patient_id))
-            .filter((id) => Number.isFinite(id) && id > 0);
-        const maxId = patientIds.length ? Math.max(...patientIds) : 0;
-        return maxId + 1;
+            .filter((id) => Number.isFinite(id) && id > 0)
+        );
+
+        // Reserve PAT-001 for the built-in dummy patient.
+        let nextId = 2;
+        while (usedIds.has(nextId)) {
+            nextId += 1;
+        }
+        return nextId;
     }
 
     function getProfileStatusMap() {
