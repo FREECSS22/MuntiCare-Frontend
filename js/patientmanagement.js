@@ -17,30 +17,6 @@ const LEGACY_PATIENT_LABELS = {
     "patient9@example.com": "Luis Garcia",
     "patient10@example.com": "Clara Mendoza"
 };
-const LEGACY_PATIENT_BY_ID = {
-    "1": "Mark James",
-    "2": "Sarah Williams",
-    "3": "Robert Brown",
-    "4": "John Doe",
-    "5": "Jane Smith",
-    "6": "Maria Santos",
-    "7": "Jose Delacruz",
-    "8": "Ana Reyes",
-    "9": "Luis Garcia",
-    "10": "Clara Mendoza"
-};
-const LEGACY_EMAIL_BY_ID = {
-    "1": "mark.james@example.com",
-    "2": "sarah.williams@example.com",
-    "3": "robert.brown@example.com",
-    "4": "john.doe@example.com",
-    "5": "jane.smith@example.com",
-    "6": "maria.santos@example.com",
-    "7": "jose.delacruz@example.com",
-    "8": "ana.reyes@example.com",
-    "9": "luis.garcia@example.com",
-    "10": "clara.mendoza@example.com"
-};
 
 let allRecords = [];
 let filteredRecords = [];
@@ -149,7 +125,7 @@ function normalizeRecord(item) {
     const profileByEmail = findProfileByEmail(patientProfiles, item.patient_email || item.patient?.email || item.patient?.user?.email || "");
     const profileById = findProfileByPatientId(patientProfiles, patientId);
     const resolvedProfile = profileByEmail || profileById || null;
-    const patientName =
+    let patientName =
         resolvedProfile?.full_name ||
         [resolvedProfile?.given_name, resolvedProfile?.surname].filter(Boolean).join(" ") ||
         item.patient_name ||
@@ -159,15 +135,25 @@ function normalizeRecord(item) {
         item.patient?.user?.name ||
         LEGACY_PATIENT_LABELS[item.patient?.user?.email] ||
         LEGACY_PATIENT_LABELS[item.patient_email] ||
-        LEGACY_PATIENT_BY_ID[String(patientId)] ||
         item.patient?.name ||
         (patientId ? `Patient #${patientId}` : "N/A");
     let patientEmail = resolvedProfile?.email || item.patient_email || item.patient?.email || item.patient?.user?.email || "";
-    if (!patientEmail && LEGACY_EMAIL_BY_ID[String(patientId)]) {
-        patientEmail = LEGACY_EMAIL_BY_ID[String(patientId)];
+
+    if (!patientEmail && patientId) {
+        const byIdEmail = getPatientEmailFromUsersById(patientId);
+        if (byIdEmail) patientEmail = byIdEmail;
     }
-    if (!patientEmail && patientName && patientName !== "N/A" && !patientName.startsWith("Patient #")) {
-        patientEmail = toExampleEmail(patientName);
+
+    // Avoid generic placeholders like "Patient" for display names.
+    if (isGenericPatientName(patientName)) {
+        const byUserEmail = getPatientNameFromUsers(patientEmail);
+        if (byUserEmail) patientName = byUserEmail;
+    }
+    if (isGenericPatientName(patientName) && patientEmail) {
+        patientName = humanizeEmailName(patientEmail);
+    }
+    if (isGenericPatientName(patientName)) {
+        patientName = patientId ? `Patient #${patientId}` : "N/A";
     }
 
     const bloodType = resolvedProfile?.blood_type || item.blood_type || item.patient?.blood_type || item.patient_blood_type || "N/A";
@@ -183,6 +169,54 @@ function normalizeRecord(item) {
         appointmentDate,
         startTime
     };
+}
+
+function isGenericPatientName(value) {
+    const name = String(value || "").trim().toLowerCase();
+    if (!name) return true;
+    if (name === "patient" || name === "n/a") return true;
+    return /^patient\s*#?\d*$/.test(name);
+}
+
+function getPatientNameFromUsers(email) {
+    const key = String(email || "").trim().toLowerCase();
+    if (!key) return "";
+    try {
+        const raw = localStorage.getItem("munticare_users_v1");
+        const list = raw ? JSON.parse(raw) : [];
+        if (!Array.isArray(list)) return "";
+        const found = list.find(
+            (u) => String(u?.email || "").trim().toLowerCase() === key && String(u?.role || "").toLowerCase() === "patient"
+        );
+        return String(found?.full_name || found?.name || "").trim();
+    } catch {
+        return "";
+    }
+}
+
+function getPatientEmailFromUsersById(patientId) {
+    const id = String(patientId || "").trim();
+    if (!id) return "";
+    try {
+        const raw = localStorage.getItem("munticare_users_v1");
+        const list = raw ? JSON.parse(raw) : [];
+        if (!Array.isArray(list)) return "";
+        const found = list.find(
+            (u) => String(u?.patient_id || "").trim() === id && String(u?.role || "").toLowerCase() === "patient"
+        );
+        return String(found?.email || "").trim().toLowerCase();
+    } catch {
+        return "";
+    }
+}
+
+function humanizeEmailName(email) {
+    const local = String(email || "").split("@")[0] || "";
+    if (!local) return "Patient";
+    return local
+        .replace(/[._-]+/g, " ")
+        .trim()
+        .replace(/\b\w/g, (ch) => ch.toUpperCase());
 }
 
 function readPatientProfiles() {
@@ -390,13 +424,4 @@ function escapeHtml(value) {
         .replace(/>/g, "&gt;")
         .replace(/\"/g, "&quot;")
         .replace(/'/g, "&#39;");
-}
-
-function toExampleEmail(fullName) {
-    const slug = String(fullName)
-        .trim()
-        .toLowerCase()
-        .replace(/[^a-z0-9\s]/g, "")
-        .replace(/\s+/g, ".");
-    return slug ? `${slug}@example.com` : "";
 }

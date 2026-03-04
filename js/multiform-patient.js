@@ -62,6 +62,7 @@ document.addEventListener("DOMContentLoaded", () => {
             : "";
 
         const profileStorageKey = "munticare_patient_profiles_v1";
+        const usersStorageKey = "munticare_users_v1";
         let profileMap = {};
         try {
             profileMap = JSON.parse(localStorage.getItem(profileStorageKey) || "{}");
@@ -69,8 +70,43 @@ document.addEventListener("DOMContentLoaded", () => {
             profileMap = {};
         }
 
+        // Resolve and persist a stable patient_id so data never falls back to dummy PAT-001.
+        let users = [];
+        try {
+            users = JSON.parse(localStorage.getItem(usersStorageKey) || "[]");
+            if (!Array.isArray(users)) users = [];
+        } catch {
+            users = [];
+        }
+
+        const userIndex = users.findIndex((u) => String(u?.email || "").trim().toLowerCase() === email);
+        const byUserRecord = Number(userIndex >= 0 ? users[userIndex]?.patient_id : 0);
+        const byCurrent = Number(current?.patient_id || 0);
+        const byExistingProfile = Number(profileMap[email]?.patient_id || 0);
+        let resolvedPatientId = byCurrent || byUserRecord || byExistingProfile;
+
+        if (!Number.isFinite(resolvedPatientId) || resolvedPatientId <= 0) {
+            const used = new Set(
+                users
+                    .filter((u) => String(u?.role || "").toLowerCase() === "patient")
+                    .map((u) => Number(u?.patient_id))
+                    .filter((id) => Number.isFinite(id) && id > 0)
+            );
+            resolvedPatientId = 2;
+            while (used.has(resolvedPatientId)) resolvedPatientId += 1;
+        }
+
+        if (userIndex >= 0) {
+            users[userIndex] = {
+                ...users[userIndex],
+                patient_id: resolvedPatientId,
+                is_new_patient: true
+            };
+            localStorage.setItem(usersStorageKey, JSON.stringify(users));
+        }
+
         profileMap[email] = {
-            patient_id: current.patient_id || "",
+            patient_id: resolvedPatientId,
             email,
             full_name: fullName,
             given_name: String(formData.get("given_name") || "").trim(),
@@ -94,6 +130,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const updatedCurrent = {
             ...current,
+            patient_id: resolvedPatientId,
             full_name: fullName || current.full_name || "",
             profile_completed: true
         };

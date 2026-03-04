@@ -24,18 +24,6 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 });
 
-const patientDirectory = [
-    { id: 1, name: 'Mark James', email: 'mark.james@example.com' },
-    { id: 2, name: 'Sarah Williams', email: 'sarah.williams@example.com' },
-    { id: 3, name: 'Robert Brown', email: 'robert.brown@example.com' },
-    { id: 4, name: 'John Doe', email: 'john.doe@example.com' },
-    { id: 5, name: 'Jane Smith', email: 'jane.smith@example.com' },
-    { id: 6, name: 'Maria Santos', email: 'maria.santos@example.com' },
-    { id: 7, name: 'Jose Delacruz', email: 'jose.delacruz@example.com' },
-    { id: 8, name: 'Ana Reyes', email: 'ana.reyes@example.com' },
-    { id: 9, name: 'Luis Garcia', email: 'luis.garcia@example.com' },
-    { id: 10, name: 'Clara Mendoza', email: 'clara.mendoza@example.com' }
-];
 const patientContext = getCurrentPatientContext();
 const patientId = patientContext.id;
 const patientIdDetails = patientContext.id;
@@ -50,39 +38,57 @@ let feedbackQueue = [];
 let feedbackContextById = {};
 
 function getCurrentPatientContext() {
-    const fallback = patientDirectory[0];
-    const urlPatientId = new URLSearchParams(window.location.search).get('patient_id');
-    if (urlPatientId) {
-        const byUrl = patientDirectory.find((p) => String(p.id) === String(urlPatientId));
-        if (byUrl) return byUrl;
-    }
-    try {
-        const rawSelected = localStorage.getItem('munticare_selected_patient_v1');
-        if (rawSelected) {
-            const selected = JSON.parse(rawSelected);
-            const selectedId = selected?.patientId || selected?.raw?.patient_id;
-            if (selectedId) {
-                const bySelected = patientDirectory.find((p) => String(p.id) === String(selectedId));
-                if (bySelected) return bySelected;
-            }
-        }
-    } catch {
-        // ignore selected patient parse errors
-    }
+    const fallback = { id: 0, name: "Patient", email: "" };
     try {
         const raw = localStorage.getItem('munticare_current_user_v1');
         if (!raw) return fallback;
         const current = JSON.parse(raw);
-        if (!current || current.role !== 'patient') return fallback;
-        const matched = patientDirectory.find((p) => p.email === current.email);
-        if (matched) return matched;
+        if (!current || current.role !== 'patient') {
+            // Non-patient context (e.g., healthcare preview page): rely on selected patient record.
+            const rawSelected = localStorage.getItem('munticare_selected_patient_v1');
+            const selected = rawSelected ? JSON.parse(rawSelected) : null;
+            if (selected) {
+                return {
+                    id: Number(selected?.patientId || selected?.raw?.patient_id || 1),
+                    name: selected?.patientName || selected?.raw?.patient_name || selected?.raw?.patient?.user?.profile?.full_name || "Patient",
+                    email: selected?.patientEmail || selected?.raw?.patient_email || selected?.raw?.patient?.user?.email || ""
+                };
+            }
+            return fallback;
+        }
+
+        const email = String(current.email || "").toLowerCase();
+        const profileMap = getPatientProfilesMap();
+        const profile = email ? profileMap[email] : null;
+        const userMapId = getPatientIdFromUsers(email);
+        const resolvedId = Number(current.patient_id || profile?.patient_id || userMapId || 0);
+
         return {
-            id: Number(current.patient_id) || 999,
-            name: current.full_name || "Patient",
-            email: current.email
+            id: resolvedId > 0 ? resolvedId : 0,
+            name:
+                profile?.full_name ||
+                [profile?.given_name, profile?.surname].filter(Boolean).join(" ") ||
+                current.full_name ||
+                "Patient",
+            email: current.email || ""
         };
     } catch {
         return fallback;
+    }
+}
+
+function getPatientIdFromUsers(email) {
+    const key = String(email || "").trim().toLowerCase();
+    if (!key) return 0;
+    try {
+        const raw = localStorage.getItem("munticare_users_v1");
+        const list = raw ? JSON.parse(raw) : [];
+        if (!Array.isArray(list)) return 0;
+        const found = list.find((u) => String(u?.email || "").trim().toLowerCase() === key && String(u?.role || "").toLowerCase() === "patient");
+        const id = Number(found?.patient_id || 0);
+        return Number.isFinite(id) && id > 0 ? id : 0;
+    } catch {
+        return 0;
     }
 }
 
@@ -254,8 +260,13 @@ function isNewPatientAccount() {
     const current = getCurrentUser();
     if (!current || current.role !== "patient") return false;
     if (current.is_new_patient === true) return true;
-    const email = String(current.email || "").toLowerCase();
-    return !patientDirectory.some((p) => p.email === email);
+    try {
+        const map = JSON.parse(localStorage.getItem("munticare_patient_profile_status_v1") || "{}");
+        const email = String(current.email || "").toLowerCase();
+        return !Boolean(map[email]?.completed);
+    } catch {
+        return false;
+    }
 }
 
 function clearDummySectionsForNewPatient() {
@@ -850,16 +861,29 @@ document.getElementById('appointmentForm')?.addEventListener('submit', async fun
     const persistDemoAppointment = () => {
         const staffSelect = this.querySelector('select[name="staff_id"]');
         const staffName = staffSelect?.options[staffSelect.selectedIndex]?.text || 'Staff TBA';
+        const current = getCurrentUser();
+        const currentEmail = String(current?.email || "").toLowerCase();
+        const profileMap = getPatientProfilesMap();
+        const profile = currentEmail ? profileMap[currentEmail] : null;
+        const resolvedPatientId = Number(current?.patient_id || profile?.patient_id || patientIdDetails || 1);
+        const resolvedPatientName =
+            profile?.full_name ||
+            [profile?.given_name, profile?.surname].filter(Boolean).join(" ") ||
+            current?.full_name ||
+            patientContext.name ||
+            "Patient";
+        const resolvedPatientEmail = currentEmail || patientContext.email || "";
+
         const newItem = {
             id: Date.now(),
-            patient_id: patientIdDetails,
-            patient_name: patientContext.name,
+            patient_id: resolvedPatientId,
+            patient_name: resolvedPatientName,
             patient: {
-                id: patientIdDetails,
-                given_name: patientContext.name,
+                id: resolvedPatientId,
+                given_name: resolvedPatientName,
                 user: {
-                    email: patientContext.email,
-                    profile: { full_name: patientContext.name }
+                    email: resolvedPatientEmail,
+                    profile: { full_name: resolvedPatientName }
                 }
             },
             staff_id: String(data.staff_id || ''),
