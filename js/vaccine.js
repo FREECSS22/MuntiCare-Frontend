@@ -1,17 +1,16 @@
 // Dummy vaccine data
 let vaccineData = [
-    { id: 1, name: 'Influenza (Flu) Vaccine', description: 'Annual flu vaccine for seasonal influenza prevention' },
-    { id: 2, name: 'Oral Polio Vaccine (OPV)', description: 'Live attenuated vaccine for polio prevention' },
-    { id: 3, name: 'COVID-19 mRNA Vaccine (Pfizer-BioNTech)', description: 'mRNA vaccine for COVID-19 prevention' },
-    { id: 4, name: 'BCG (Bacillus Calmette–Guérin)', description: 'Vaccine primarily used against tuberculosis' },
-    { id: 5, name: 'Rabies Vaccine', description: 'Vaccine for rabies prevention and post-exposure treatment' },
-    { id: 6, name: 'DPT (Diphtheria, Pertussis, Tetanus)', description: 'Combined vaccine for three diseases' },
-    { id: 7, name: 'Varicella (Chickenpox) Vaccine', description: 'Vaccine to prevent chickenpox' },
-    { id: 8, name: 'Inactivated Polio Vaccine (IPV)', description: 'Inactivated poliovirus vaccine' },
-    { id: 9, name: 'MMR Vaccine', description: 'Combined vaccine for Measles, Mumps, and Rubella' },
-    { id: 10, name: 'Hepatitis B Vaccine', description: 'Vaccine to prevent Hepatitis B infection' }
+    { id: 1, name: 'BCG (Bacillus Calmette-Guerin)', description: 'Protects against severe forms of tuberculosis (TB)' },
+    { id: 2, name: 'COVID-19 mRNA Vaccine (Pfizer-BioNTech)', description: 'Prevents COVID-19 infection' },
+    { id: 3, name: 'DPT (Diphtheria, Pertussis, Tetanus)', description: 'Protects against diphtheria, whooping cough, and tetanus' },
+    { id: 4, name: 'Hepatitis B Vaccine', description: 'Prevents Hepatitis B virus infection' },
+    { id: 5, name: 'Inactivated Polio Vaccine (IPV)', description: 'Prevents polio (injectable form)' },
+    { id: 6, name: 'Influenza (Flu) Vaccine', description: 'Prevents seasonal influenza' },
+    { id: 7, name: 'MMR Vaccine', description: 'Protects against measles, mumps, and rubella' },
+    { id: 8, name: 'Oral Polio Vaccine (OPV)', description: 'Prevents poliomyelitis' },
+    { id: 9, name: 'Rabies Vaccine', description: 'Prevents rabies infection after exposure' },
+    { id: 10, name: 'Varicella (Chickenpox) Vaccine', description: 'Prevents chickenpox' }
 ];
-
 let currentPage = 1;
 const rowsPerPage = 5;
 
@@ -65,7 +64,7 @@ function loadVaccines() {
     tbody.innerHTML = paginatedData.map(v => `
         <tr>
             <td>${v.name}</td>
-            <td>${v.description || '—'}</td>
+            <td>${v.description || 'â€”'}</td>
             <td class="text-center">
                 <button class="btn btn-sm btn-outline-primary" onclick="editVaccine(${v.id})">
                     <i class="bi bi-pencil"></i>

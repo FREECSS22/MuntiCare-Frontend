@@ -1,17 +1,116 @@
-// Dummy vaccine data with your provided data
+// Dummy vaccine batches
 let vaccineData = [
-    { id: 1, vaccine: 'Influenza (Flu) Vaccine', batch: 'FLU-2024-001', quantity: 600, expiryDate: '2025-09-30' },
-    { id: 2, vaccine: 'Oral Polio Vaccine (OPV)', batch: 'OPV-2024-001', quantity: 450, expiryDate: '2025-10-10' },
-    { id: 3, vaccine: 'COVID-19 mRNA Vaccine (Pfizer-BioNTech)', batch: 'COVID-PF-2024-001', quantity: 300, expiryDate: '2025-12-31' },
-    { id: 4, vaccine: 'BCG (Bacillus Calmette–Guérin)', batch: 'BCG-2024-001', quantity: 500, expiryDate: '2026-03-31' },
-    { id: 5, vaccine: 'Rabies Vaccine', batch: 'RABIES-2024-001', quantity: 200, expiryDate: '2026-06-30' },
-    { id: 6, vaccine: 'DPT (Diphtheria, Pertussis, Tetanus)', batch: 'DPT-2024-001', quantity: 400, expiryDate: '2026-08-30' },
-    { id: 7, vaccine: 'Varicella (Chickenpox) Vaccine', batch: 'VAR-2024-001', quantity: 250, expiryDate: '2026-09-25' },
-    { id: 8, vaccine: 'Inactivated Polio Vaccine (IPV)', batch: 'IPV-2024-001', quantity: 280, expiryDate: '2026-11-20' },
-    { id: 9, vaccine: 'MMR Vaccine', batch: 'MMR-2024-001', quantity: 320, expiryDate: '2026-12-15' },
-    { id: 10, vaccine: 'Hepatitis B Vaccine', batch: 'HEPB-2024-001', quantity: 350, expiryDate: '2027-01-15' }
+    {
+        id: 1,
+        vaccine: 'BCG (Bacillus Calmette-Guerin)',
+        batch: 'BCG-2024-001',
+        manufacturer: 'Serum Institute of India',
+        quantity: 500,
+        expiryDate: '2026-03-31',
+        receivedDate: '2024-04-10',
+        supplier: 'Department of Health',
+        storage_conditions: 'Store at 2C to 8C'
+    },
+    {
+        id: 2,
+        vaccine: 'COVID-19 mRNA Vaccine (Pfizer-BioNTech)',
+        batch: 'COVID-PF-2024-001',
+        manufacturer: 'Pfizer-BioNTech',
+        quantity: 300,
+        expiryDate: '2025-12-31',
+        receivedDate: '2024-06-15',
+        supplier: 'Pfizer Philippines',
+        storage_conditions: 'Store at -70C'
+    },
+    {
+        id: 3,
+        vaccine: 'DPT (Diphtheria, Pertussis, Tetanus)',
+        batch: 'DPT-2024-001',
+        manufacturer: 'GlaxoSmithKline',
+        quantity: 400,
+        expiryDate: '2026-08-30',
+        receivedDate: '2024-05-05',
+        supplier: 'GSK Philippines',
+        storage_conditions: 'Store at 2C to 8C'
+    },
+    {
+        id: 4,
+        vaccine: 'Hepatitis B Vaccine',
+        batch: 'HEPB-2024-001',
+        manufacturer: 'Sanofi Pasteur',
+        quantity: 350,
+        expiryDate: '2027-01-15',
+        receivedDate: '2024-07-01',
+        supplier: 'Sanofi Philippines',
+        storage_conditions: 'Store at 2C to 8C'
+    },
+    {
+        id: 5,
+        vaccine: 'Inactivated Polio Vaccine (IPV)',
+        batch: 'IPV-2024-001',
+        manufacturer: 'Biological E',
+        quantity: 280,
+        expiryDate: '2026-11-20',
+        receivedDate: '2024-06-01',
+        supplier: 'DOH',
+        storage_conditions: 'Store at 2C to 8C'
+    },
+    {
+        id: 6,
+        vaccine: 'Influenza (Flu) Vaccine',
+        batch: 'FLU-2024-001',
+        manufacturer: 'Sanofi Pasteur',
+        quantity: 600,
+        expiryDate: '2025-09-30',
+        receivedDate: '2024-08-10',
+        supplier: 'Sanofi Philippines',
+        storage_conditions: 'Store at 2C to 8C'
+    },
+    {
+        id: 7,
+        vaccine: 'MMR Vaccine',
+        batch: 'MMR-2024-001',
+        manufacturer: 'Merck',
+        quantity: 320,
+        expiryDate: '2026-12-15',
+        receivedDate: '2024-05-20',
+        supplier: 'Merck Philippines',
+        storage_conditions: 'Store at 2C to 8C'
+    },
+    {
+        id: 8,
+        vaccine: 'Oral Polio Vaccine (OPV)',
+        batch: 'OPV-2024-001',
+        manufacturer: 'Bio Farma',
+        quantity: 450,
+        expiryDate: '2025-10-10',
+        receivedDate: '2024-04-25',
+        supplier: 'DOH',
+        storage_conditions: 'Store at 2C to 8C'
+    },
+    {
+        id: 9,
+        vaccine: 'Rabies Vaccine',
+        batch: 'RABIES-2024-001',
+        manufacturer: 'Sanofi Pasteur',
+        quantity: 200,
+        expiryDate: '2026-06-30',
+        receivedDate: '2024-03-15',
+        supplier: 'Sanofi Philippines',
+        storage_conditions: 'Store at 2C to 8C'
+    },
+    {
+        id: 10,
+        vaccine: 'Varicella (Chickenpox) Vaccine',
+        batch: 'VAR-2024-001',
+        manufacturer: 'Merck',
+        quantity: 250,
+        expiryDate: '2026-09-25',
+        receivedDate: '2024-07-18',
+        supplier: 'Merck Philippines',
+        storage_conditions: 'Store at 2C to 8C'
+    }
 ];
-
 let currentPage = 1;
 const itemsPerPage = 5;
 

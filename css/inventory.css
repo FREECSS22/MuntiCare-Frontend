@@ -37,7 +37,7 @@ body {
 .top-navbar {
     position: fixed;
     top: 0;
-    left: 0;
+    left: 265px;
     right: 0;
     height: 70px;
     background: white;
@@ -318,6 +318,7 @@ main {
     }
 
     .top-navbar {
+        left: 0;
         padding: 0 1rem;
     }
 

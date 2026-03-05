@@ -38,7 +38,7 @@ body {
 .top-navbar {
     position: fixed;
     top: 0;
-    left: 0;
+    left: 265px;
     right: 0;
     height: 70px;
     background: white;
@@ -51,10 +51,29 @@ body {
 }
 
 .top-navbar h4 {
-    margin-left: 240px;
+    margin: 0;
     font-size: 1.5rem;
     font-weight: 600;
     color: #212529;
+}
+
+.top-navbar .breadcrumb {
+    font-size: 0.95rem;
+}
+
+.top-navbar .breadcrumb-item a {
+    color: #212529;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.top-navbar .breadcrumb-item + .breadcrumb-item::before {
+    color: #6c757d;
+}
+
+.top-navbar .breadcrumb-item.active {
+    color: #6c757d;
+    font-weight: 600;
 }
 
 .menu-toggle {
@@ -312,12 +331,17 @@ main {
     }
 
     .top-navbar {
+        left: 0;
         padding: 0 1rem;
     }
 
     .top-navbar h4 {
         font-size: 1.25rem;
         margin: 0px;
+    }
+
+    .top-navbar .breadcrumb {
+        font-size: 0.82rem;
     }
 
     .sidebar-overlay {
