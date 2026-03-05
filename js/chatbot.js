@@ -1,5 +1,27 @@
 let chatStarted = false;
 let isSending = false;
+const EMERGENCY_KEYWORDS = [
+    "chest pain",
+    "can't breathe",
+    "cannot breathe",
+    "shortness of breath",
+    "difficulty breathing",
+    "severe bleeding",
+    "bleeding heavily",
+    "stroke",
+    "face drooping",
+    "slurred speech",
+    "heart attack",
+    "unconscious",
+    "passed out",
+    "seizure",
+    "suicidal",
+    "suicide",
+    "kill myself",
+    "overdose",
+    "poisoned",
+    "anaphylaxis"
+];
 
 const chatEl = document.getElementById("chat");
 const inputEl = document.getElementById("msg");
@@ -71,6 +93,37 @@ function removeTypingIndicator() {
     if (indicator) indicator.remove();
 }
 
+function hasEmergencyKeyword(text) {
+    const lower = String(text || "").toLowerCase();
+    return EMERGENCY_KEYWORDS.some((keyword) => lower.includes(keyword));
+}
+
+function appendEmergencyWarning() {
+    if (!chatEl) return;
+
+    if (!chatStarted) {
+        chatEl.innerHTML = "";
+        chatStarted = true;
+    }
+
+    const row = document.createElement("div");
+    row.className = "msg-row bot-row";
+
+    const avatar = document.createElement("img");
+    avatar.className = "msg-avatar";
+    avatar.src = "image/Muni.jpeg";
+    avatar.alt = "Bot";
+
+    const bubble = document.createElement("div");
+    bubble.className = "bubble bot alert-emergency";
+    bubble.innerText = "Emergency warning: Your message may indicate a medical emergency. Call local emergency services now or go to the nearest emergency room immediately.";
+
+    row.appendChild(avatar);
+    row.appendChild(bubble);
+    chatEl.appendChild(row);
+    chatEl.scrollTop = chatEl.scrollHeight;
+}
+
 function getConfig() {
     const cfg = window.CHATBOT_CONFIG || {};
     return {
@@ -112,6 +165,11 @@ async function sendMsg() {
 
     appendMessage(text, "me");
     if (inputEl) inputEl.value = "";
+
+    if (hasEmergencyKeyword(text)) {
+        appendEmergencyWarning();
+        return;
+    }
 
     isSending = true;
     if (sendBtn) sendBtn.disabled = true;
