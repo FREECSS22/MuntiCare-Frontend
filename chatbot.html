@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="shortcut icon" href="image/favicon.ico" type="image/x-icon">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+
+    <link rel="stylesheet" href="css/chatbot.css">
+    <title>MuntiCare</title>
+</head>
+<body>
+    <div class="chatbot-container">
+        <div class="chat-header">
+            <h2>
+                <img src="image/Muni.jpeg" alt="MuntiCare Bot" class="chatbot-avatar">
+                MuntiCare Assistant
+            </h2>
+            <div class="chat-status">
+                <span class="dot"></span>Online & Ready to Help
+            </div>
+        </div>
+
+        <div id="chat">
+            <div class="empty-state">
+                <i class="fas fa-comments"></i>
+                <p>Start a conversation by typing your question below</p>
+            </div>
+        </div>
+
+        <div class="chat-input-group">
+            <input id="msg" type="text" placeholder="Ask me anything..." autocomplete="off">
+            <button id="sendBtn" type="button" aria-label="Send">
+                <i class="fas fa-paper-plane"></i>
+            </button>
+        </div>
+    </div>
+
+    <script>
+        window.CHATBOT_CONFIG = {
+            endpoint: "/api/chatbot",
+            model: "gemini-1.5-flash"
+        };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/chatbot.js"></script>
+</body>
+</html>
