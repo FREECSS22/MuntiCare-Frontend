@@ -9,6 +9,32 @@ body {
     overflow-x: hidden;
 }
 
+.sidebar,
+.table-responsive {
+    scrollbar-width: thin;
+    scrollbar-color: #9decc8 #eafff5;
+}
+
+.sidebar::-webkit-scrollbar {
+    width: 8px;
+}
+
+.table-responsive::-webkit-scrollbar {
+    height: 8px;
+}
+
+.sidebar::-webkit-scrollbar-track,
+.table-responsive::-webkit-scrollbar-track {
+    background: #eafff5;
+    border-radius: 999px;
+}
+
+.sidebar::-webkit-scrollbar-thumb,
+.table-responsive::-webkit-scrollbar-thumb {
+    background: #9decc8;
+    border-radius: 999px;
+}
+
 .top-navbar {
     position: fixed;
     top: 0;

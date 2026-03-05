@@ -401,8 +401,24 @@ main {
         overflow-x: auto;
         overflow-y: hidden;
         -webkit-overflow-scrolling: touch;
+        scrollbar-width: thin;
+        scrollbar-color: #9decc8 #eafff5;
         justify-content: flex-start !important;
         padding-bottom: 0.25rem;
+    }
+
+    #patientTabs::-webkit-scrollbar {
+        height: 6px;
+    }
+
+    #patientTabs::-webkit-scrollbar-track {
+        background: #eafff5;
+        border-radius: 999px;
+    }
+
+    #patientTabs::-webkit-scrollbar-thumb {
+        background: #9decc8;
+        border-radius: 999px;
     }
 
     #patientTabs .nav-item {
@@ -480,6 +496,22 @@ main {
     #collapseAudit .accordion-body {
         overflow-x: auto;
         -webkit-overflow-scrolling: touch;
+        scrollbar-width: thin;
+        scrollbar-color: #9decc8 #eafff5;
+    }
+
+    #collapseAudit .accordion-body::-webkit-scrollbar {
+        height: 6px;
+    }
+
+    #collapseAudit .accordion-body::-webkit-scrollbar-track {
+        background: #eafff5;
+        border-radius: 999px;
+    }
+
+    #collapseAudit .accordion-body::-webkit-scrollbar-thumb {
+        background: #9decc8;
+        border-radius: 999px;
     }
 
     #collapseAudit .table {
@@ -496,5 +528,10 @@ main {
 
     .modal-footer {
         padding: 0.75rem 0.9rem;
+    }
+
+    #summary-pane .medical-info-table {
+        margin-left: 0.5rem;
+        width: calc(100% - 0.5rem);
     }
 }
