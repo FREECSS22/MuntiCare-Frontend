@@ -40,7 +40,12 @@
                 
                 <div class="mb-2">
                     <label for="password" class="form-label fw-semibold small">Password</label>
-                    <input id="password" type="password" placeholder="Password" class="form-control form-control-sm" required>
+                    <div class="password-wrap">
+                        <input id="password" type="password" placeholder="Password" class="form-control form-control-sm pe-5" required>
+                        <button type="button" class="password-toggle-btn" data-target="password" aria-label="Show password">
+                            <i class="bi bi-eye"></i>
+                        </button>
+                    </div>
                 </div>
                 
                 <div class="d-flex justify-content-between align-items-center mb-2">
@@ -53,6 +58,12 @@
                 
                 <p class="small text-muted mb-2">By logging in, I agree to the Terms & Privacy Policy</p>
                 <button type="submit" class="btn btn-sm w-100 text-white fw-semibold" style="background-color: #1CDB88;">Submit</button>
+                <div class="text-center mt-3 d-lg-none">
+                    <span class="small text-muted">Don't have an account?</span>
+                    <button type="button" class="btn btn-link p-0 ms-1 small fw-semibold auth-mobile-switch" id="mobileShowRegister">
+                        Register
+                    </button>
+                </div>
             </form>
 
             <!-- Registration Form -->
@@ -71,17 +82,33 @@
                 
                 <div class="mb-2">
                     <label class="form-label fw-semibold small">Password</label>
-                    <input id="registerPassword" type="password" class="form-control form-control-sm" placeholder="Password" minlength="8" required>
+                    <div class="password-wrap">
+                        <input id="registerPassword" type="password" class="form-control form-control-sm pe-5" placeholder="Password" minlength="8" required>
+                        <button type="button" class="password-toggle-btn" data-target="registerPassword" aria-label="Show password">
+                            <i class="bi bi-eye"></i>
+                        </button>
+                    </div>
                 </div>
                 
                 <div class="mb-2">
                     <label class="form-label fw-semibold small">Confirm Password</label>
-                    <input id="registerConfirmPassword" type="password" class="form-control form-control-sm" placeholder="Confirm Password" minlength="8" required>
+                    <div class="password-wrap">
+                        <input id="registerConfirmPassword" type="password" class="form-control form-control-sm pe-5" placeholder="Confirm Password" minlength="8" required>
+                        <button type="button" class="password-toggle-btn" data-target="registerConfirmPassword" aria-label="Show password">
+                            <i class="bi bi-eye"></i>
+                        </button>
+                    </div>
                 </div>
                 
                 <button type="submit" class="btn btn-sm w-100 text-white fw-semibold" style="background-color: #1CDB88;" id="btnRegister">
                     Register
                 </button>
+                <div class="text-center mt-3 d-lg-none">
+                    <span class="small text-muted">Already have an account?</span>
+                    <button type="button" class="btn btn-link p-0 ms-1 small fw-semibold auth-mobile-switch" id="mobileShowLogin">
+                        Sign In
+                    </button>
+                </div>
             </form>
         </div>
 

@@ -36,6 +36,9 @@ document.addEventListener("DOMContentLoaded", function () {
     const registerForm = document.getElementById("registerForm");
     const panelTitle = document.getElementById("panelTitle");
     const btnRegister = document.getElementById("btnRegister");
+    const mobileShowRegister = document.getElementById("mobileShowRegister");
+    const mobileShowLogin = document.getElementById("mobileShowLogin");
+    const passwordToggleButtons = document.querySelectorAll(".password-toggle-btn");
 
     let isLogin = true;
     let isAnimating = false;
@@ -213,7 +216,39 @@ document.addEventListener("DOMContentLoaded", function () {
         }, 300);
     }
 
-    toggleBtn.addEventListener("click", toggleAuthPanel);
+    if (toggleBtn) {
+        toggleBtn.addEventListener("click", toggleAuthPanel);
+    }
+    if (mobileShowRegister) {
+        mobileShowRegister.addEventListener("click", () => {
+            if (isLogin) toggleAuthPanel();
+        });
+    }
+    if (mobileShowLogin) {
+        mobileShowLogin.addEventListener("click", () => {
+            if (!isLogin) toggleAuthPanel();
+        });
+    }
+
+    if (passwordToggleButtons.length) {
+        passwordToggleButtons.forEach((btn) => {
+            btn.addEventListener("click", () => {
+                const targetId = btn.getAttribute("data-target");
+                const targetInput = targetId ? document.getElementById(targetId) : null;
+                if (!targetInput) return;
+
+                const nextType = targetInput.type === "password" ? "text" : "password";
+                targetInput.type = nextType;
+                btn.setAttribute("aria-label", nextType === "text" ? "Hide password" : "Show password");
+
+                const icon = btn.querySelector("i");
+                if (icon) {
+                    icon.classList.toggle("bi-eye", nextType === "password");
+                    icon.classList.toggle("bi-eye-slash", nextType === "text");
+                }
+            });
+        });
+    }
 
     loginForm.addEventListener("submit", function (e) {
         e.preventDefault();

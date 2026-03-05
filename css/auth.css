@@ -52,3 +52,48 @@
 .form-loading {
     pointer-events: none;
 }
+
+.password-wrap {
+    position: relative;
+}
+
+.password-toggle-btn {
+    position: absolute;
+    top: 50%;
+    right: 8px;
+    transform: translateY(-50%);
+    border: 0;
+    background: transparent;
+    color: #6c757d;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+}
+
+.password-toggle-btn:hover,
+.password-toggle-btn:focus {
+    color: #1CDB88;
+    background: rgba(28, 219, 136, 0.1);
+}
+
+.auth-mobile-switch {
+    color: #1CDB88;
+    text-decoration: none;
+}
+
+.auth-mobile-switch:hover,
+.auth-mobile-switch:focus {
+    color: #13b56e;
+    text-decoration: underline;
+}
+
+@media (max-width: 991.98px) {
+    .slide-active #formSection,
+    .slide-active #infoPanel {
+        transform: none;
+    }
+}
