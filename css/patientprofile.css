@@ -39,6 +39,12 @@ body {
     display: none;
 }
 
+.top-navbar .dropdown-menu .dropdown-item:hover,
+.top-navbar .dropdown-menu .dropdown-item:focus {
+    background-color: #e8fff4;
+    color: #0f5132;
+}
+
 .sidebar {
     position: fixed;
     left: 0;

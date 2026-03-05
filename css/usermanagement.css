@@ -75,6 +75,12 @@ body {
     margin-left: 0.5rem;
 }
 
+.top-navbar .dropdown-menu .dropdown-item:hover,
+.top-navbar .dropdown-menu .dropdown-item:focus {
+    background-color: #e8fff4;
+    color: #0f5132;
+}
+
 /* Sidebar */
 .sidebar { 
     position: fixed;
