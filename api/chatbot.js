@@ -15,7 +15,7 @@ module.exports = async (req, res) => {
     try {
         const body = typeof req.body === "string" ? JSON.parse(req.body || "{}") : (req.body || {});
         const message = String(body.message || "").trim();
-        const model = String(body.model || "gemini-1.5-flash").trim();
+        const preferredModel = String(body.model || "gemini-2.5-flash").trim();
 
         if (!message) {
             return res.status(422).json({ error: "Message is required." });
@@ -26,26 +26,53 @@ module.exports = async (req, res) => {
             return res.status(500).json({ error: "Server API key is not configured." });
         }
 
-        const upstream = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent?key=${encodeURIComponent(apiKey)}`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                contents: [
-                    {
-                        role: "user",
-                        parts: [{ text: message }]
-                    }
-                ]
-            })
-        });
+        const modelCandidates = [
+            preferredModel,
+            "gemini-2.5-flash",
+            "gemini-2.0-flash",
+            "gemini-1.5-flash-latest"
+        ];
 
-        const data = await upstream.json();
-        if (!upstream.ok) {
-            return res.status(upstream.status).json({
-                error: data?.error?.message || "Gemini API request failed."
-            });
+        let data = null;
+        let lastError = "Gemini API request failed.";
+        let lastStatus = 502;
+
+        for (const model of modelCandidates) {
+            const upstream = await fetch(
+                `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent?key=${encodeURIComponent(apiKey)}`,
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        contents: [
+                            {
+                                role: "user",
+                                parts: [{ text: message }]
+                            }
+                        ]
+                    })
+                }
+            );
+
+            const attempt = await upstream.json();
+            if (upstream.ok) {
+                data = attempt;
+                break;
+            }
+
+            lastStatus = upstream.status;
+            lastError = attempt?.error?.message || "Gemini API request failed.";
+            const msg = String(lastError).toLowerCase();
+            const isModelNotFound = upstream.status === 404 || msg.includes("not found") || msg.includes("not supported");
+            if (!isModelNotFound) {
+                return res.status(upstream.status).json({ error: lastError });
+            }
+        }
+
+        if (!data) {
+            return res.status(lastStatus).json({ error: lastError });
         }
 
         const parts = data?.candidates?.[0]?.content?.parts || [];
