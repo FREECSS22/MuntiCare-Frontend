@@ -35,19 +35,35 @@ const STAFF_NAME_BY_ID = {
 };
 
 const LOCAL_BATCHES_BY_VACCINE = {
-    "COVID-19 mRNA Vaccine (Pfizer-BioNTech)": [
-        { id: "PFZ-1023", label: "PFZ-1023" },
-        { id: "PFZ-1024", label: "PFZ-1024" }
+    "BCG (Bacillus Calmette-Guerin)": [
+        { id: "BCG-2024-001", label: "BCG-2024-001" }
     ],
-    "Influenza (Flu) Vaccine": [
-        { id: "FLU-2026-A", label: "FLU-2026-A" },
-        { id: "FLU-2026-B", label: "FLU-2026-B" }
+    "COVID-19 mRNA Vaccine (Pfizer-BioNTech)": [
+        { id: "COVID-PF-2024-001", label: "COVID-PF-2024-001" }
+    ],
+    "DPT (Diphtheria, Pertussis, Tetanus)": [
+        { id: "DPT-2024-001", label: "DPT-2024-001" }
     ],
     "Hepatitis B Vaccine": [
-        { id: "HEPB-88X", label: "HEPB-88X" }
+        { id: "HEPB-2024-001", label: "HEPB-2024-001" }
     ],
-    "Tetanus Vaccine": [
-        { id: "TET-450", label: "TET-450" }
+    "Inactivated Polio Vaccine (IPV)": [
+        { id: "IPV-2024-001", label: "IPV-2024-001" }
+    ],
+    "Influenza (Flu) Vaccine": [
+        { id: "FLU-2024-001", label: "FLU-2024-001" }
+    ],
+    "MMR Vaccine": [
+        { id: "MMR-2024-001", label: "MMR-2024-001" }
+    ],
+    "Oral Polio Vaccine (OPV)": [
+        { id: "OPV-2024-001", label: "OPV-2024-001" }
+    ],
+    "Rabies Vaccine": [
+        { id: "RABIES-2024-001", label: "RABIES-2024-001" }
+    ],
+    "Varicella (Chickenpox) Vaccine": [
+        { id: "VAR-2024-001", label: "VAR-2024-001" }
     ]
 };
 
@@ -287,11 +303,11 @@ function setupVaccineTabActions() {
 
     const vaccineSelect = document.getElementById("vaccineSelect");
     const batchSelect = document.getElementById("vaccineBatchSelect");
-    const administrationDateInput = form.querySelector('input[name="administration_date"]');
+    const administrationDateInput = document.getElementById("administrationDateHidden");
+    const administrationDateDisplay = document.getElementById("administrationDateDisplay");
 
-    if (administrationDateInput) {
-        administrationDateInput.value = new Date().toISOString().split("T")[0];
-    }
+    if (administrationDateInput) administrationDateInput.value = new Date().toISOString().split("T")[0];
+    if (administrationDateDisplay) administrationDateDisplay.value = new Date().toISOString().split("T")[0];
 
     hydrateAdministeredBy();
 
@@ -391,6 +407,7 @@ function setupVaccineTabActions() {
 
         form.reset();
         if (administrationDateInput) administrationDateInput.value = new Date().toISOString().split("T")[0];
+        if (administrationDateDisplay) administrationDateDisplay.value = new Date().toISOString().split("T")[0];
         if (batchSelect) {
             batchSelect.innerHTML = '<option value="">Select vaccine first</option>';
             batchSelect.disabled = true;

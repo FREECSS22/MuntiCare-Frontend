@@ -614,10 +614,16 @@
                             <label class="form-label fw-semibold">Vaccine Name <span class="text-danger">*</span></label>
                             <select class="form-select" name="vaccine_name" id="vaccineSelect" required>
                                 <option value="">Select Vaccine</option>
+                                <option value="BCG (Bacillus Calmette-Guerin)">BCG (Bacillus Calmette-Guerin)</option>
                                 <option value="COVID-19 mRNA Vaccine (Pfizer-BioNTech)">COVID-19 mRNA Vaccine (Pfizer-BioNTech)</option>
-                                <option value="Influenza (Flu) Vaccine">Influenza (Flu) Vaccine</option>
+                                <option value="DPT (Diphtheria, Pertussis, Tetanus)">DPT (Diphtheria, Pertussis, Tetanus)</option>
                                 <option value="Hepatitis B Vaccine">Hepatitis B Vaccine</option>
-                                <option value="Tetanus Vaccine">Tetanus Vaccine</option>
+                                <option value="Inactivated Polio Vaccine (IPV)">Inactivated Polio Vaccine (IPV)</option>
+                                <option value="Influenza (Flu) Vaccine">Influenza (Flu) Vaccine</option>
+                                <option value="MMR Vaccine">MMR Vaccine</option>
+                                <option value="Oral Polio Vaccine (OPV)">Oral Polio Vaccine (OPV)</option>
+                                <option value="Rabies Vaccine">Rabies Vaccine</option>
+                                <option value="Varicella (Chickenpox) Vaccine">Varicella (Chickenpox) Vaccine</option>
                             </select>
                         </div>
 
@@ -639,7 +645,8 @@
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label class="form-label fw-semibold">Administration Date <span class="text-danger">*</span></label>
-                                <input type="date" class="form-control" name="administration_date" required>
+                                <input type="date" class="form-control bg-light text-muted" id="administrationDateDisplay" disabled aria-disabled="true" tabindex="-1">
+                                <input type="hidden" name="administration_date" id="administrationDateHidden">
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label class="form-label fw-semibold">Dose Number</label>
