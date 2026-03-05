@@ -304,6 +304,13 @@
                     <p>Start a conversation with MuntiCare Assistant</p>
                 </div>
             </div>
+            <div class="cw-quick-replies" id="cwQuickReplies">
+                <button type="button" class="cw-quick-btn" data-msg="What are your clinic hours?">Clinic Hours</button>
+                <button type="button" class="cw-quick-btn" data-msg="What services are available?">Services</button>
+                <button type="button" class="cw-quick-btn" data-msg="What are the appointment requirements?">Requirements</button>
+                <button type="button" class="cw-quick-btn" data-msg="How do I book an appointment?">Book</button>
+                <button type="button" class="cw-quick-btn" data-msg="What are the login credentials?">Credentials</button>
+            </div>
             <div class="chat-widget-input-wrap">
                 <input id="cwMsg" type="text" placeholder="Ask me anything..." autocomplete="off">
                 <button id="cwSendBtn" type="button" aria-label="Send message">
@@ -528,7 +535,7 @@
         }
 
         .chat-widget-body {
-            height: calc(100% - 116px);
+            height: calc(100% - 160px);
             background: #f6fffb;
             padding: 12px;
             overflow-y: auto;
@@ -619,6 +626,48 @@
             padding: 10px;
             border-top: 1px solid #e5e7eb;
             background: #fff;
+        }
+
+        .cw-quick-replies {
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            padding: 8px 10px;
+            border-top: 1px solid #e5e7eb;
+            background: #fff;
+            scrollbar-width: thin;
+            scrollbar-color: #9decc8 #eafff5;
+        }
+
+        .cw-quick-replies::-webkit-scrollbar {
+            height: 6px;
+        }
+
+        .cw-quick-replies::-webkit-scrollbar-track {
+            background: #eafff5;
+            border-radius: 999px;
+        }
+
+        .cw-quick-replies::-webkit-scrollbar-thumb {
+            background: linear-gradient(90deg, #1CDB88 0%, #13b56e 100%);
+            border-radius: 999px;
+        }
+
+        .cw-quick-btn {
+            border: 1px solid #cdeedd;
+            background: #f3fff9;
+            color: #0f5132;
+            border-radius: 999px;
+            padding: 6px 10px;
+            font-size: 12px;
+            font-weight: 600;
+            white-space: nowrap;
+            transition: background .2s ease, border-color .2s ease;
+        }
+
+        .cw-quick-btn:hover {
+            background: #e8fff4;
+            border-color: #1CDB88;
         }
 
         #cwMsg {
@@ -718,6 +767,7 @@
             const chat = document.getElementById("cwChat");
             const input = document.getElementById("cwMsg");
             const send = document.getElementById("cwSendBtn");
+            const quickBtns = document.querySelectorAll(".cw-quick-btn");
             if (!widget || !bubble || !panel || !icon) return;
 
             function setOpen(isOpen) {
@@ -787,8 +837,8 @@
                     .replace(/'/g, "&#39;");
             }
 
-            async function sendMessage() {
-                const text = String(input.value || "").trim();
+            async function sendMessage(presetText) {
+                const text = String((presetText ?? input.value) || "").trim();
                 if (!text || sending) return;
                 appendMe(text);
                 input.value = "";
@@ -819,6 +869,11 @@
             input.addEventListener("keypress", (e) => {
                 if (e.key === "Enter") sendMessage();
             });
+            if (quickBtns.length) {
+                quickBtns.forEach((btn) => {
+                    btn.addEventListener("click", () => sendMessage(btn.getAttribute("data-msg") || ""));
+                });
+            }
         })();
     </script>
 </body>

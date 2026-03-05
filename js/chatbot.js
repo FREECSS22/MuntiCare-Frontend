@@ -26,11 +26,17 @@ const EMERGENCY_KEYWORDS = [
 const chatEl = document.getElementById("chat");
 const inputEl = document.getElementById("msg");
 const sendBtn = document.getElementById("sendBtn");
+const quickReplyButtons = document.querySelectorAll(".quick-reply-btn");
 
 if (sendBtn) sendBtn.addEventListener("click", sendMsg);
 if (inputEl) {
     inputEl.addEventListener("keypress", (e) => {
         if (e.key === "Enter") sendMsg();
+    });
+}
+if (quickReplyButtons.length) {
+    quickReplyButtons.forEach((btn) => {
+        btn.addEventListener("click", () => sendMsg(btn.getAttribute("data-message") || ""));
     });
 }
 
@@ -159,8 +165,8 @@ async function sendViaBackend(endpoint, message, model) {
     return data.reply || data.output_text || (raw || "No response received");
 }
 
-async function sendMsg() {
-    const text = String(inputEl?.value || "").trim();
+async function sendMsg(presetText) {
+    const text = String((presetText ?? inputEl?.value) || "").trim();
     if (!text || isSending) return;
 
     appendMessage(text, "me");
