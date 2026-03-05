@@ -137,6 +137,27 @@ function getLocalFaqResponse(message) {
 
     const faqs = [
         {
+            keys: ["credential", "credentials", "login", "account", "test account", "demo account", "username", "password", "admin", "healthcare", "doctor", "dummy patient"],
+            includeGuidance: false,
+            reply:
+                "You can use these test credentials:\n\n" +
+                "Admin:\n" +
+                "- Email: admin@munticare.com\n" +
+                "- Password: password\n\n" +
+                "Healthcare / Doctors:\n" +
+                "- aiah@munticare.com / password\n" +
+                "- colet@munticare.com / password\n" +
+                "- maloi@munticare.com / password\n" +
+                "- gwen@munticare.com / password\n" +
+                "- stacey@munticare.com / password\n" +
+                "- mikha@munticare.com / password\n" +
+                "- jhoanna@munticare.com / password\n" +
+                "- sheena@munticare.com / password\n\n" +
+                "Dummy Patient:\n" +
+                "- mark.james@example.com / password\n\n" +
+                "You can also create a new doctor account in User Management, and create/register a new patient account from Auth."
+        },
+        {
             keys: ["clinic hour", "opening hour", "open time", "close time", "what time", "schedule"],
             reply:
                 "MuntiCare clinic hours are typically Monday to Saturday, 8:00 AM to 5:00 PM. Sunday and holidays may have limited services. Please check the appointments page for updated schedules."
@@ -170,6 +191,9 @@ function getLocalFaqResponse(message) {
 
     for (const item of faqs) {
         if (item.keys.some((k) => text.includes(k))) {
+            if (item.includeGuidance === false) {
+                return item.reply;
+            }
             return `${item.reply}\n\n${guidance}`;
         }
     }
