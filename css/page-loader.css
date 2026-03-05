@@ -1,0 +1,134 @@
+.munti-skeleton-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 99999;
+    background: #f0f2f5;
+    opacity: 1;
+    transition: opacity 0.25s ease;
+}
+
+.munti-skeleton-overlay.hide {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.munti-skeleton-shell {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.munti-skel {
+    border-radius: 10px;
+    background: linear-gradient(90deg, #e4e9ee 25%, #f8fbff 50%, #e4e9ee 75%);
+    background-size: 220% 100%;
+    animation: muntiShimmer 1.15s linear infinite;
+}
+
+.munti-skeleton-nav {
+    height: 70px;
+    margin: 0;
+    border-radius: 0;
+    background: linear-gradient(90deg, #f8fbff 25%, #ffffff 50%, #f8fbff 75%);
+    background-size: 220% 100%;
+    animation: muntiShimmer 1.15s linear infinite;
+    border-bottom: 1px solid #e6eaee;
+}
+
+.munti-skeleton-main {
+    flex: 1;
+    display: grid;
+    grid-template-columns: 265px 1fr;
+    gap: 0;
+}
+
+.munti-skeleton-sidebar {
+    background: #1cdb88;
+    padding: 18px 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.munti-skeleton-logo {
+    height: 54px;
+    background: linear-gradient(90deg, rgba(255, 255, 255, 0.28) 25%, rgba(255, 255, 255, 0.45) 50%, rgba(255, 255, 255, 0.28) 75%);
+    background-size: 220% 100%;
+}
+
+.munti-skeleton-menu {
+    height: 36px;
+    background: linear-gradient(90deg, rgba(255, 255, 255, 0.22) 25%, rgba(255, 255, 255, 0.42) 50%, rgba(255, 255, 255, 0.22) 75%);
+    background-size: 220% 100%;
+}
+
+.munti-skeleton-content {
+    padding: 22px 22px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.munti-skeleton-head {
+    width: 230px;
+    height: 34px;
+}
+
+.munti-skeleton-cards {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+}
+
+.munti-skeleton-card {
+    height: 110px;
+}
+
+.munti-skeleton-table {
+    height: 240px;
+}
+
+.munti-skeleton-overlay.no-sidebar .munti-skeleton-main {
+    grid-template-columns: 1fr;
+}
+
+.munti-skeleton-overlay.no-sidebar .munti-skeleton-sidebar {
+    display: none;
+}
+
+.munti-skeleton-overlay.no-sidebar .munti-skeleton-content {
+    padding-top: 16px;
+}
+
+@media (max-width: 991.98px) {
+    .munti-skeleton-main {
+        grid-template-columns: 1fr;
+    }
+
+    .munti-skeleton-sidebar {
+        display: none;
+    }
+
+    .munti-skeleton-content {
+        padding: 14px;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .munti-skeleton-cards {
+        grid-template-columns: 1fr;
+    }
+
+    .munti-skeleton-nav {
+        height: 60px;
+    }
+}
+
+@keyframes muntiShimmer {
+    0% {
+        background-position: 100% 0;
+    }
+    100% {
+        background-position: -100% 0;
+    }
+}

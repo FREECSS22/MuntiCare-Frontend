@@ -285,6 +285,11 @@ document.addEventListener("DOMContentLoaded", function () {
             timer: 2000,
             showConfirmButton: false
         }).then(() => {
+            try {
+                sessionStorage.setItem("munticare_show_login_skeleton_v1", "1");
+            } catch {
+                // ignore storage issues
+            }
             localStorage.setItem(
                 "munticare_current_user_v1",
                 JSON.stringify({

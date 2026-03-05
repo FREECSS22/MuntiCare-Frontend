@@ -1,4 +1,10 @@
 document.addEventListener("DOMContentLoaded", () => {
+    try {
+        sessionStorage.removeItem("munticare_show_login_skeleton_v1");
+    } catch {
+        // ignore storage issues
+    }
+
     const form = document.getElementById("patientProfileForm");
     if (!form) return;
 
