@@ -339,6 +339,27 @@ main {
     .sidebar-overlay.show {
         display: block;
     }
+
+    .inventory-header {
+        display: block !important;
+    }
+
+    .inventory-header h5 {
+        margin-bottom: 0.5rem !important;
+    }
+
+    .inventory-actions {
+        display: flex;
+        gap: 0.5rem;
+    }
+
+    .inventory-actions .btn {
+        flex: 1 1 0;
+        white-space: nowrap;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
 }
 
 @media (min-width: 769px) and (max-width: 1024px) {
