@@ -132,13 +132,10 @@ Tone Guidelines:
 
 function getLocalFaqResponse(message) {
     const text = String(message || "").toLowerCase();
-    const guidance =
-        "This information is for general guidance only and should not replace professional medical advice. Please consult a licensed healthcare professional for proper diagnosis and treatment.";
 
     const faqs = [
         {
             keys: ["credential", "credentials", "login", "account", "test account", "demo account", "username", "password", "admin", "healthcare", "doctor", "dummy patient"],
-            includeGuidance: false,
             reply:
                 "You can use these test credentials:\n\n" +
                 "Admin:\n" +
@@ -191,10 +188,7 @@ function getLocalFaqResponse(message) {
 
     for (const item of faqs) {
         if (item.keys.some((k) => text.includes(k))) {
-            if (item.includeGuidance === false) {
-                return item.reply;
-            }
-            return `${item.reply}\n\n${guidance}`;
+            return item.reply;
         }
     }
 
