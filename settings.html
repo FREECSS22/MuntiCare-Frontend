@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MuntiCare - Settings</title>
+    <link rel="shortcut icon" href="image/favicon.ico" type="image/x-icon">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/settings.css">
+</head>
+<body>
+    <nav class="top-navbar">
+        <div class="d-flex align-items-center gap-3">
+            <button class="back-btn" id="settingsBackBtn" type="button" aria-label="Back to dashboard">
+                <i class="bi bi-arrow-left"></i>
+            </button>
+            <button class="menu-toggle" id="menuToggle">
+                <i class="bi bi-list"></i>
+            </button>
+            <h6 class="mb-0 fw-semibold">Settings</h6>
+        </div>
+
+        <div class="dropdown user-dropdown">
+            <button class="dropdown-toggle d-flex align-items-center" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <i class="bi bi-person-circle fs-4"></i>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end">
+                <li><a class="dropdown-item active" href="settings.html" aria-current="page">Settings</a></li>
+                <li><hr class="dropdown-divider"></li>
+                <li><a class="dropdown-item" href="auth.html">Logout</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <aside class="sidebar" id="sidebar">
+        <header class="sidebar-header">
+            <img src="image/MuntiCare Logo.png" alt="Logo" class="logo">
+            <div class="sidebar-header-text">
+                <h5>MuntiCare</h5>
+                <small>Health Management</small>
+            </div>
+        </header>
+
+        <nav class="sidebar-nav" id="settingsSidebarNav">
+            <div class="menu-section">
+                <p class="menu-label">Main Menu</p>
+                <ul class="nav flex-column">
+                    <li><a href="admin/overview.html" class="nav-link"><i class="bi bi-house-door"></i> Overview</a></li>
+                    <li><a href="admin/inventory.html" class="nav-link"><i class="bi bi-box"></i> Inventory</a></li>
+                </ul>
+            </div>
+
+            <div class="menu-section">
+                <p class="menu-label">Administration</p>
+                <ul class="nav flex-column">
+                    <li><a href="admin/usermanagement.html" class="nav-link"><i class="bi bi-people"></i> User Management</a></li>
+                    <li><a href="admin/feedbacks.html" class="nav-link"><i class="bi bi-chat-left-text"></i> Feedbacks</a></li>
+                </ul>
+            </div>
+        </nav>
+    </aside>
+
+    <main class="main-content">
+        <div class="page-header">
+            <h4 class="mb-1 fw-bold">Account Settings</h4>
+            <p class="text-muted mb-0">Manage your profile details and password.</p>
+        </div>
+
+        <div class="profile-card">
+            <div class="profile-avatar">
+                <img id="settingsAvatarImage" alt="Profile Avatar" hidden>
+                <span id="settingsAvatarInitials">JD</span>
+                <button type="button" class="camera-icon" id="settingsAvatarTrigger" aria-label="Upload profile picture">
+                    <i class="bi bi-camera"></i>
+                </button>
+                <input type="file" id="settingsAvatarInput" class="d-none" accept="image/*">
+            </div>
+            <div class="profile-meta">
+                <h5 class="mb-1" id="settingsUserName">Juan Dela Cruz</h5>
+                <p class="mb-2" id="settingsUserEmail">juan.delacruz@munticare.ph</p>
+                <span class="role-badge" id="settingsUserRole">Healthcare Staff</span>
+            </div>
+        </div>
+
+        <div class="section-card">
+            <div class="section-head">
+                <h6>Personal Information</h6>
+                <small>Update your account details.</small>
+            </div>
+            <form id="personalInfoForm">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Full Name</label>
+                        <input type="text" class="form-control" id="settingsFormFullName" value="Juan Dela Cruz">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Email Address</label>
+                        <input type="email" class="form-control" id="settingsFormEmail" value="juan.delacruz@munticare.ph">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Phone Number</label>
+                        <input type="tel" class="form-control" value="+63 912 345 6789">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Date of Birth</label>
+                        <input type="date" class="form-control" value="1985-06-15">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Gender</label>
+                        <select class="form-select">
+                            <option value="male" selected>Male</option>
+                            <option value="female">Female</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <div class="section-card">
+            <div class="section-head">
+                <h6>Change Password</h6>
+                <small>Use a strong password for better account security.</small>
+            </div>
+            <form id="changePasswordForm">
+                <div class="row g-3">
+                    <div class="col-12">
+                        <label class="form-label">Current Password</label>
+                        <div class="password-wrap">
+                            <input type="password" class="form-control" id="currentPassword" placeholder="Enter current password">
+                            <button type="button" class="password-toggle-btn" data-target="currentPassword" aria-label="Show password">
+                                <i class="bi bi-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">New Password</label>
+                        <div class="password-wrap">
+                            <input type="password" class="form-control" id="newPassword" placeholder="Enter new password">
+                            <button type="button" class="password-toggle-btn" data-target="newPassword" aria-label="Show password">
+                                <i class="bi bi-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Confirm Password</label>
+                        <div class="password-wrap">
+                            <input type="password" class="form-control" id="confirmPassword" placeholder="Confirm new password">
+                            <button type="button" class="password-toggle-btn" data-target="confirmPassword" aria-label="Show password">
+                                <i class="bi bi-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <div class="action-buttons">
+            <button class="btn btn-outline-secondary" id="cancelBtn">Cancel</button>
+            <button class="btn btn-success" id="saveBtn">
+                <i class="bi bi-save me-1"></i> Save Changes
+            </button>
+        </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="js/settings.js"></script>
+</body>
+</html>
