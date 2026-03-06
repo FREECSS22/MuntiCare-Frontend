@@ -16,7 +16,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-p1ZxvNbuI3E1K+BcPBhVwxq+3+BabeOJKgbnhP+M7DgpU7bV6lvv1/beDZV2C9xUbG8MRoysLfzJ6w2l0Q39xw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     
     <!-- AOS animations -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" integrity="sha512-HoSRODADu3AjpLx4cHK/0qyFQExg3C4gzzwGHPZUOqITgNv224ocCGFAvH608b1EBJ7MT5V7ySFkN4hN43IKNQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://unpkg.com/aos@2.3.4/dist/aos.css" />
     <link rel="stylesheet" href="style.css">
     
     <title>MuntiCare</title>
@@ -280,6 +280,28 @@
         </div>
 </footer>
 
+    <div class="modal fade" id="demoDisclaimerModal" tabindex="-1" aria-labelledby="demoDisclaimerModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow">
+                <div class="modal-header" style="background: linear-gradient(135deg, #1CDB88 0%, #13b56e 100%);">
+                    <h5 class="modal-title text-white fw-bold" id="demoDisclaimerModalLabel">Demo Disclaimer</h5>
+                </div>
+                <div class="modal-body">
+                    <p class="mb-2">
+                        This system is for <strong>demo purposes only</strong> to showcase the full MuntiCare system and functionality.
+                    </p>
+                    <p class="mb-0 text-muted small">
+                        Data, workflows, and user actions shown here are sample scenarios for presentation and testing.
+                        For demo account access, please ask the chatbot for credentials.
+                    </p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success" data-bs-dismiss="modal">I Understand</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="chat-widget" id="chatWidget">
         <button type="button" class="chat-bubble-launcher" id="chatBubbleBtn" aria-label="Open MuntiCare chatbot">
             <i class="bi bi-chat-dots-fill" id="chatBubbleIcon"></i>
@@ -333,6 +355,8 @@
         stats.forEach((stat, index) => {
             const col = document.createElement("div");
             col.className = "col-6 col-md-3";
+            col.setAttribute("data-aos", "fade-up");
+            col.setAttribute("data-aos-delay", index * 120);
 
             col.innerHTML = `
             <div class="p-4 bg-white rounded-4 shadow-sm h-100 stat-card">
@@ -456,6 +480,10 @@
 
             testimonialsContainer.appendChild(col);
         });
+
+        if (window.AOS) {
+            AOS.refreshHard();
+        }
     </script>
 
     <script>
@@ -473,11 +501,22 @@
         });
     </script>
     <!-- AOS library -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js" integrity="sha512-GtNm7+kD4uCxVMiFJqvFmzMXJO2+e9s9q+7SyIptOyDolZTP7v702DjFn3v8Vl37yI00Z8ExN6RzWA2GBoCx2Q==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
     <script>
-        AOS.init();
+        AOS.init({ once: true, duration: 800, offset: 50 });
+        setTimeout(() => {
+            if (window.AOS) AOS.refreshHard();
+        }, 0);
     </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+    <script>
+        window.addEventListener("DOMContentLoaded", () => {
+            const modalEl = document.getElementById("demoDisclaimerModal");
+            if (!modalEl || typeof bootstrap === "undefined") return;
+            const demoModal = new bootstrap.Modal(modalEl, { backdrop: "static", keyboard: false });
+            demoModal.show();
+        });
+    </script>
     <style>
         .chat-widget {
             position: fixed;
@@ -490,18 +529,19 @@
             position: absolute;
             right: 0;
             bottom: 72px;
-            width: min(380px, calc(100vw - 24px));
-            height: min(600px, calc(100vh - 100px));
+            width: min(355px, calc(100vw - 24px));
+            height: min(560px, calc(100vh - 100px));
             border-radius: 16px;
             overflow: hidden;
             background: #fff;
             box-shadow: 0 16px 36px rgba(0, 0, 0, 0.18);
             border: 1px solid #e5e7eb;
             display: none;
+            flex-direction: column;
         }
 
         .chat-widget.open .chat-widget-panel {
-            display: block;
+            display: flex;
         }
 
         .chat-widget-header {
@@ -535,7 +575,7 @@
         }
 
         .chat-widget-body {
-            height: calc(100% - 160px);
+            flex: 1;
             background: #f6fffb;
             padding: 12px;
             overflow-y: auto;
@@ -619,11 +659,10 @@
         }
 
         .chat-widget-input-wrap {
-            height: 60px;
             display: flex;
             align-items: center;
             gap: 8px;
-            padding: 10px;
+            padding: 10px 10px calc(12px + env(safe-area-inset-bottom));
             border-top: 1px solid #e5e7eb;
             background: #fff;
         }
@@ -698,8 +737,8 @@
         }
 
         .chat-bubble-launcher {
-            width: 58px;
-            height: 58px;
+            width: 54px;
+            height: 54px;
             border-radius: 50%;
             background: linear-gradient(135deg, #1CDB88 0%, #13b56e 100%);
             color: #fff;
@@ -752,7 +791,7 @@
 
             .chat-widget-panel {
                 width: calc(100vw - 24px);
-                height: min(560px, calc(100vh - 92px));
+                height: min(540px, calc(100vh - 92px));
                 bottom: 68px;
             }
         }
